@@ -2,6 +2,7 @@ import { readdirSync, readFileSync } from 'node:fs'
 import { afterAll, expect, test } from 'vitest'
 import {
   mansionIngresses,
+  mercuryCycles,
   moonAspects,
   phaseEvents,
   signIngresses,
@@ -23,7 +24,7 @@ const PLANETS: readonly Planet[] = [
   'Neptune',
   'Pluto',
 ]
-const CHECKED_KINDS = new Set(['phase', 'sign', 'mansion', 'aspect'])
+const CHECKED_KINDS = new Set(['phase', 'sign', 'mansion', 'aspect', 'mercury'])
 
 interface Row {
   kind: string
@@ -43,11 +44,14 @@ function years(): number[] {
   return fixtureYears().filter(year => DEFAULT_YEARS.includes(year))
 }
 
-function toleranceFor(year: number): number {
+function toleranceFor(kind: string, year: number): number {
+  if (kind === 'mercury') return 600
   return year >= 1950 && year <= 2050 ? 60 : 300
 }
 
 function computedRows(start: Date, end: Date): Row[] {
+  const startUnix = start.getTime() / 1000
+  const endUnix = end.getTime() / 1000
   return [
     ...phaseEvents(start, end).map(event => ({
       kind: 'phase',
@@ -69,6 +73,12 @@ function computedRows(start: Date, end: Date): Row[] {
       code: `${event.planet}-${event.angle}`,
       unix: event.time.getTime() / 1000,
     })),
+    ...mercuryCycles(start, end)
+      .flatMap(cycle => [
+        { kind: 'mercury', code: 'R', unix: cycle.stationRetro.getTime() / 1000 },
+        { kind: 'mercury', code: 'D', unix: cycle.stationDirect.getTime() / 1000 },
+      ])
+      .filter(row => row.unix >= startUnix && row.unix < endUnix),
   ]
 }
 
@@ -100,7 +110,6 @@ for (const year of years()) {
       const data = JSON.parse(readFileSync(`${FIXTURE_DIR}/${year}.json`, 'utf8'))
       const start = new Date(data.coverage.start)
       const end = new Date(data.coverage.end)
-      const tol = toleranceFor(year)
       const bucket = year >= 1950 && year <= 2050 ? 'core' : 'outer'
 
       const expected = new Map<string, number[]>()
@@ -133,6 +142,7 @@ for (const year of years()) {
         }
         want.sort((a, b) => a - b)
         got.sort((a, b) => a - b)
+        const tol = toleranceFor(kind, year)
         for (let i = 0; i < want.length; i++) {
           const error = Math.abs(got[i] - want[i])
           trackWorst(bucket, kind, code, year, error)

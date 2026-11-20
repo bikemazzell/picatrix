@@ -31,3 +31,19 @@ export interface MoonAspect {
   angle: AspectAngle
   time: Date
 }
+
+export interface VoidPeriod {
+  start: Date
+  end: Date
+  sign: number
+  lastAspect: MoonAspect | null
+}
+
+export interface MercuryCycle {
+  preShadowStart: Date
+  stationRetro: Date
+  stationDirect: Date
+  postShadowEnd: Date
+}
+
+export type MercuryState = 'approaching' | 'retrograde' | 'leaving' | 'none'
