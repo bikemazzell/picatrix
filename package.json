@@ -8,7 +8,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest run",
-    "test:reference": "REFERENCE_YEARS=all vitest run tests/astro/reference.test.ts"
+    "test:reference": "REFERENCE_YEARS=all vitest run --silent=false tests/astro/reference.test.ts"
   },
   "dependencies": {
     "astronomy-engine": "2.1.19",

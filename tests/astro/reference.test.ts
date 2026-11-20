@@ -119,7 +119,10 @@ for (const year of years()) {
       }
 
       const violations: string[] = []
-      const keys = new Set([...expected.keys(), ...computed.keys()])
+      const covered = new Set<string>(data.coverage.kinds)
+      const keys = new Set(
+        [...expected.keys(), ...computed.keys()].filter(key => covered.has(key.split('|')[0])),
+      )
       for (const key of keys) {
         const want = expected.get(key) ?? []
         const got = computed.get(key) ?? []

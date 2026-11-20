@@ -1,6 +1,9 @@
 import { AstroTime, Search } from 'astronomy-engine'
 import { norm180 } from './longitude'
 
+// norm180 wraps at 180, so a step-to-step change of 180 degrees or more is a wrap
+// artifact, not motion. Callers must keep steps small enough that true motion per
+// step stays below this bound.
 const JUMP_GUARD_DEGREES = 180
 const TOLERANCE_SECONDS = 1
 const DUPLICATE_MS = 2_000
