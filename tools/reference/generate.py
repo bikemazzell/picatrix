@@ -220,7 +220,7 @@ def selfcheck():
     return 0
 
 
-def main(start_year: int, end_year: int, out_dir: Path, include_aspects: bool = True, jobs: int = 4):
+def main(start_year: int, end_year: int, out_dir: Path, include_aspects: bool = True, jobs: int = 1):
     if not MIN_YEAR <= start_year <= end_year <= MAX_YEAR:
         raise SystemExit(f'years must satisfy {MIN_YEAR} <= start <= end <= {MAX_YEAR} (DE440s coverage)')
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -252,7 +252,7 @@ def cli():
     parser.add_argument('--selfcheck', action='store_true', help='compare find_discrete with brute force')
     parser.add_argument('--out', type=Path, default=DEFAULT_OUT, help='output directory')
     parser.add_argument('--no-aspects', action='store_true', help='skip Moon aspects')
-    parser.add_argument('--jobs', type=int, default=4, help='parallel year processes')
+    parser.add_argument('--jobs', type=int, default=1, help='parallel year processes')
     args = parser.parse_args()
     if args.selfcheck:
         sys.exit(selfcheck())

@@ -6,3 +6,4 @@ reviews/
 local/
 tools/reference/.venv/
 tools/reference/*.bsp
+__pycache__/
