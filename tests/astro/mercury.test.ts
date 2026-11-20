@@ -1,15 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { mercuryCycles, mercuryStateAt, type MercuryCycle } from '../../src/astro'
+import { SEC, expectWithin } from './helpers'
 
-const SEC = 1000
 const EPS_MS = 60 * SEC
-
-function expectWithin(actual: Date, iso: string, tolSeconds: number) {
-  expect(
-    Math.abs(actual.getTime() - Date.parse(iso)),
-    `${actual.toISOString()} vs ${iso}`,
-  ).toBeLessThanOrEqual(tolSeconds * SEC)
-}
 
 function novemberCycle(): MercuryCycle {
   const nov = mercuryCycles(

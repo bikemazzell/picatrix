@@ -6,15 +6,7 @@ import {
   phaseEvents,
   signIngresses,
 } from '../../src/astro'
-
-const SEC = 1000
-
-function expectWithin(actual: Date, iso: string, tolSeconds: number) {
-  expect(
-    Math.abs(actual.getTime() - Date.parse(iso)),
-    `${actual.toISOString()} vs ${iso}`,
-  ).toBeLessThanOrEqual(tolSeconds * SEC)
-}
+import { expectWithin } from './helpers'
 
 describe('signIngresses', () => {
   test('returns the DE440 fixture ingresses for 2026-11-19..2026-11-23', () => {

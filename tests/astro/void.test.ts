@@ -1,15 +1,8 @@
 import { describe, expect, test } from 'vitest'
 import { signIngresses, VOID_PLANETS, voidPeriods } from '../../src/astro'
+import { SEC, expectWithin } from './helpers'
 
-const SEC = 1000
 const DAY_MS = 86_400_000
-
-function expectWithin(actual: Date, iso: string, tolSeconds: number) {
-  expect(
-    Math.abs(actual.getTime() - Date.parse(iso)),
-    `${actual.toISOString()} vs ${iso}`,
-  ).toBeLessThanOrEqual(tolSeconds * SEC)
-}
 
 describe('voidPeriods', () => {
   test('anchors the November 2026 voids to the DE440 fixture', () => {

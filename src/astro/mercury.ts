@@ -95,7 +95,11 @@ export function mercuryStateAt(t: Date): { state: MercuryState; until: Date | nu
   )
   const current = cycles.find(cycle => cycle.preShadowStart <= t && t < cycle.postShadowEnd)
   const upcoming = cycles.find(cycle => cycle.preShadowStart > t)
-  if (!upcoming) throw new Error('no Mercury cycle begins within the search horizon')
+  if (!upcoming) {
+    throw new Error(
+      `no Mercury cycle begins within ${STATE_HORIZON_DAYS} days after ${t.toISOString()}`,
+    )
+  }
   if (!current) return { state: 'none', until: upcoming.preShadowStart, next: upcoming.preShadowStart }
   if (t < current.stationRetro) {
     return { state: 'approaching', until: current.stationRetro, next: upcoming.preShadowStart }
