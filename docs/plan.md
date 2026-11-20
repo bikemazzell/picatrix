@@ -45,11 +45,11 @@ Each item has a test in the task that owns the code (Tasks 5, 6, 10).
 **Interfaces:**
 - Produces: `make quality` runs `tsc --noEmit`, `eslint .`, `vitest run`, `vite build`. `npm test` runs `vitest run`.
 
-- [ ] **Step 1:** `git init` in `/home/v/Documents/Dev/picatrix`. Write `.gitignore` with `node_modules/`, `dist/`, `reference/`, `research/`, `reviews/`, `local/`, `tools/reference/.venv/`, `tools/reference/*.bsp`. Make sure that `git status` does not list `reference/`, `research/` or `reviews/`.
-- [ ] **Step 2:** Check the latest stable versions of vite, preact, @preact/preset-vite, typescript, vitest, jsdom, @testing-library/preact, eslint, typescript-eslint, vite-plugin-pwa with `npm view <pkg> version`. Run the telemetry gate on each, plus `astronomy-engine@2.1.19`: after `npm install --ignore-scripts`, run `grep -rniE 'telemetry|analytics|sentry|posthog|segment\.io|mixpanel|amplitude|https?://[a-z0-9.-]+/(collect|track|v1/events)' node_modules/<pkg>` for each direct dependency and read every hit. Record the result in the commit message.
-- [ ] **Step 3:** Write `tests/smoke.test.ts` that imports `astronomy-engine` and asserts `typeof Astronomy.MoonPhase === 'function'`. Run `npm test`. Expected: PASS.
-- [ ] **Step 4:** Write the `Makefile` target `quality`. Run `make quality`. Expected: zero errors and a `dist/` folder.
-- [ ] **Step 5:** Commit: `chore: scaffold Vite, Preact, Vitest, ESLint, quality gate`.
+- [x] **Step 1:** `git init` in `/home/v/Documents/Dev/picatrix`. Write `.gitignore` with `node_modules/`, `dist/`, `reference/`, `research/`, `reviews/`, `local/`, `tools/reference/.venv/`, `tools/reference/*.bsp`. Make sure that `git status` does not list `reference/`, `research/` or `reviews/`.
+- [x] **Step 2:** Check the latest stable versions of vite, preact, @preact/preset-vite, typescript, vitest, jsdom, @testing-library/preact, eslint, typescript-eslint, vite-plugin-pwa with `npm view <pkg> version`. Run the telemetry gate on each, plus `astronomy-engine@2.1.19`: after `npm install --ignore-scripts`, run `grep -rniE 'telemetry|analytics|sentry|posthog|segment\.io|mixpanel|amplitude|https?://[a-z0-9.-]+/(collect|track|v1/events)' node_modules/<pkg>` for each direct dependency and read every hit. Record the result in the commit message.
+- [x] **Step 3:** Write `tests/smoke.test.ts` that imports `astronomy-engine` and asserts `typeof Astronomy.MoonPhase === 'function'`. Run `npm test`. Expected: PASS.
+- [x] **Step 4:** Write the `Makefile` target `quality`. Run `make quality`. Expected: zero errors and a `dist/` folder.
+- [x] **Step 5:** Commit: `chore: scaffold Vite, Preact, Vitest, ESLint, quality gate`.
 
 ### Task 2: Reference generator (Skyfield, JPL DE440s)
 
