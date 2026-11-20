@@ -1,0 +1,4 @@
+title: Libra
+source: Picatrix (adapted), Book III chapter 2
+
+In Libra the operator girds himself with a thong braided from aquatic reeds and works on the eastern bank of a river, running upstream with the sacrifice burning and a bronze bow in hand, an instrument the text dates precisely: it must have been made while Venus was retrograde in Taurus and Mercury stood in Aries. Five passes are made up and down the bank, the water is struck with the bow, and a fire of wild olive wood is lit with storax thrown on it, around which the operator runs in a circle as fast as he can. A line is then drawn on the ground from his feet to the fire, a name is written along it, and the soil of that line, mixed with undisturbed earth and water, becomes two images formed in an embrace, one in the operator's likeness and one in another's. The source commends the pair above all for love, and directs that the whole working be done in the hour of the Moon.

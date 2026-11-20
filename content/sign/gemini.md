@@ -1,0 +1,4 @@
+title: Gemini
+source: Picatrix (adapted), Book III chapter 2
+
+The Moon in Gemini takes the rite to high, windy ground. The operator brings a pipe of yellow tin, three cubits in length, and a censer from the same metal, kindles a fire with the pipe, and sets a pound of storax gum burning in the censer with incense and a little amber; one end of the pipe catches the smoke and the other is aimed at the Moon, so that the suffumigation rises straight toward her. Sitting by the fire, the operator draws a circle with the pipe around himself, sets seven handfuls of bean straw at points on the rim with a piece of the sacrifice on each handful, and burns the lot. Standing at the center he speaks to the Moon as the ruler governing this world by her power and spirit, in the degree of her exaltation, then prostrates himself and repeats the recorded names before the shape appears and the request is made.

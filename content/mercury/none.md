@@ -1,0 +1,4 @@
+title: Mercury Clear
+source: Picatrix (adapted), Book II chapter 3 and Book III chapter 1
+
+With no shadow in progress, Mercury stands in his ordinary condition, and Picatrix's doctrine has little drama for it. He is intellect's planet: learning, wisdom, dialectic and grammar, philosophy, geometry and astronomy, geomancy, the reading of languages, and every craft discovered by subtle, innate talent; he governs the tongue, the brain, and the sensory memory, and quicksilver among the metals. His benevolence suits messengers and scribes. Even so, the electional rules do not sleep: a work founded on Mercury must not find him retrograde, burning in the Sun's beams, or under an unfortunate planet's gaze, and the general caution against unfortunate aspects binds him as it binds every planet. Direct, swift, and clear of the beams, he is simply the planet of the letter and the ledger, and work of that kind goes forward under him.

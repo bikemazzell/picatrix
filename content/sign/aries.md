@@ -1,0 +1,4 @@
+title: Aries
+source: Picatrix (adapted), Book III chapter 2
+
+Picatrix opens its chapter of lunar rites with the Ram. When the Moon stands in Aries at the hour of her rising, full and complete, the text sends the operator to a green, boggy flat close to running water, crowned, with a cock whose crest has been cut off; the bird is killed with a bone, because iron must never touch it. Between two iron censers of burning coals he feeds incense grain by grain until the smoke climbs, watching the Moon the while and inviting her, the luminous and honored lady who breaks the darkness, to hear a request, then walks ten paces still watching her. A page of cannabis, inscribed in the sacrifice's ash mixed with a little saffron, goes into the fire, and from the smoke a handsome man in the best clothes appears beside the censer, ready to answer. The chapter frames the whole sequence as a great secret kept by the Chaldeans and the Egyptians.

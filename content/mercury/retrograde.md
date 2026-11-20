@@ -1,0 +1,4 @@
+title: Mercury Retrograde
+source: Picatrix (adapted), Book I chapter 5, Book II chapter 3 and Book III chapter 6
+
+Retrogradation is one of the impediments Picatrix counts against a planet, alongside combustion and the beams of the Sun. The chapter's rule is blunt: never place a retrograde planet as lord of the ascendant or of the request, for the matter then drags, stretches out, and never completes, and any position founded while the planet retrogrades is ruined from the start and reaches its end only by means of effort and risk. Elsewhere the text is more particular still: an image whose foundations require Mercury must not be made while he is retrograde, combusted, or under the gaze of an unfortunate planet. The simile the source offers for such a planet is an angry, spiteful man who refuses outright whatever is asked of him; what is sought from him arrives, if at all, only through hardship and heavy labor.

@@ -1,0 +1,4 @@
+title: Full Moon
+source: Picatrix (adapted), Book II chapter 3
+
+At the opposition the Moon stands in her third quality, augmenting heat more than humidity, her effect most manifest in the growth of animal, vegetable, and mineral bodies in all their parts. The Greek and Egyptian sages, Picatrix reports, set the full Moon before every other figure, though the Chaldeans answered that the conjunction to within a minute of the Sun is stronger still, and the Persians weighed both by the sign of the meeting. By night, the text says, she outranks everything else in the sky, standing alone in her strength and her powers over the earth. For elections the full Moon closes the waxing half, the friendlier ground for sales and purchases, for advice, opinions, and duties, and for disputes; from the opposition onward the character turns, and the next square opens the coldest and driest quarter of all.

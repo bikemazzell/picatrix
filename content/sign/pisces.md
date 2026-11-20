@@ -1,0 +1,4 @@
+title: Pisces
+source: Picatrix (adapted), Book III chapter 2
+
+The last sign closes the series with resins and running water. Cannabis resin and plane tree resin in equal parts, drawn under a Sun in Virgo with Mercury bright and direct, are ground in a marble mortar with mastic gum, amber, camphor, sukk, and sarcocolla, bound together with the blood of a stag killed with a bronze knife, and kept in a glass container. At a running spring the container stands on the outer lip while a censer is set on a stone midstream, so that water rings it entirely; when its fire is lit, the contents of the container are poured into it little by little until the vessel is empty. The sacrifice is then made, the servant of the Moon appears, and the request, the text says, is led to its effect. From here the chapter passes on from the signs to the suffumigations of the seven planets, the calcitarat of the Indians, each matched to the nature of its planet.

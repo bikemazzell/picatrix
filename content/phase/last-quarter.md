@@ -1,0 +1,4 @@
+title: Last Quarter
+source: Picatrix (adapted), Book II chapter 3
+
+The second square begins the Moon's fourth quality, which runs from that square to her combustion in the Sun's beams. Her heat falls lower than in any of the other three periods, her effects dry moderately and turn very cold, and the text names the quarter moderately dry and very cold outright. It is the stretch the electional doctrine watches most warily, for whatever is begun while she wanes in light meets damage, setback, delay, and obstruction, and her waning is counted in motion as well as light, since she is then slow in her course. What the quarter does favor is every work of diminution, and the quiet trades the source assigns to the waning half: pursuing the debts owed to you, borrowing and returning, the work of philosophers, and the search for truth.

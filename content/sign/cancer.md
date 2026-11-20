@@ -1,0 +1,4 @@
+title: Cancer
+source: Picatrix (adapted), Book III chapter 2
+
+With the Moon in Cancer the operator climbs to high ground above open country and listens to every side before killing a turtledove held in the hand. Four feathers from each wing and its burned beak are bound up in cloth with colocynth and storax gum; white iris and birthwort sap, blended with the sacrifice's ash, make a figure of a rider upon a lion, which stands at the center of a circle drawn on the ground beside a written name. Tablets of vinegar, nutmeg, amber, sukk, and storax boiled together are burned before the Moon on seven successive nights, one each night. The chapter claims two uses for that smoke: a person who breathed it could not contradict the orders of the operator, and travelers through country holding lions, bears, snakes, and scorpions went unharmed; the first is reported as the sages' testimony, the second as their practice.

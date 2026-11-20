@@ -1,0 +1,4 @@
+title: Scorpio
+source: Picatrix (adapted), Book III chapter 2
+
+The Scorpio rite begins when the Moon reaches the thirteenth degree of the sign, in a place of thick trees and standing or running water. On a square figure marked out on the ground, covered with leaves of nut, lemon, and pine and moistened all over with rosewater, stand nine silver censers loaded to the brim with aloewood, storax, and incense, and the operator is dressed in purest white, with no other dye in the cloth. Water is poured between two earthenware censers with a small jar, a little of it thrown onto the ribs, and the sacrifice made; then the operator prostrates himself four times with the recorded words, sits, feeds the fires with aloewood and incense and the censers with storax, and prostrates himself four times more. The man who then appears is perfect and pleasing to behold, and the chapter rates what is asked of him as very well fulfilled.

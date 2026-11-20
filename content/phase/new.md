@@ -1,0 +1,4 @@
+title: New Moon
+source: Picatrix (adapted), Book II chapter 3
+
+The moment of conjunction carries what the text calls a fifth quality, beyond the four quarters: the Chaldean sages held that when she meets the Sun to within a single minute, the Moon takes on a condition better and stronger than any quality or figure she elsewhere assumes. The Persians qualified this, saying that the power of the conjunction rises and falls with the nature of the sign in which it falls, while the Greeks and Egyptians gave the palm instead to the full Moon. Picatrix reports all three schools and sides with the first: at conjunction the Moon rejoices like a traveler coming home from a journey, and her work there is twofold, cutting down what has grown excessive and building up what falls short, by powers like the Sun's own. She arrives at that moment out of a fourth quarter the sages described as moderately dry and very cold, her heat at its lowest ebb.

@@ -1,0 +1,4 @@
+title: First Quarter
+source: Picatrix (adapted), Book II chapter 3
+
+The first quarter closes the Moon's first quality and opens her second. From her separation out of the Sun's beams to the first square, she was held to augment humidity more than heat, and her effect showed most in herbs creeping on the ground rather than in trees rising above the earth; from the square onward to the opposition, heat and humidity increase equally, and the working spreads through vegetables and minerals alike. Picatrix treats the square as a hinge rather than a resting place: once she has left the Sun's side her powers stand balanced, and thereafter they change each time she comes to sextile, square, trine, or opposition. The doctrine's attention stays fixed on what she is moving toward, and on the strength she gathers as she goes.
