@@ -67,9 +67,7 @@ export function nowSummary(t: Date): NowSummary {
   const phases = searchAround(t, 16, phaseEvents)
   const voids = voidsAround(t)
   const active = voids.find(period => period.start <= t && t < period.end) ?? null
-  const nextVoid = (active ? voids.filter(period => period.start > active.start) : voids).find(
-    period => period.start > t,
-  )
+  const nextVoid = voids.find(period => period.start > t)
   if (!nextVoid) throw new Error(`no void period found after ${t.toISOString()}`)
   const nextEvent = phases.find(event => event.time > t)!
   const { fraction, waxing } = illumination(t)
@@ -180,7 +178,7 @@ function stepVoid(t: Date, dir: 1 | -1): Date {
         const index = list.indexOf(active)
         if (index > 0) return list[index - 1].end
       } else {
-        const ended = last(list, period => period.end <= t)
+        const ended = last(list, period => period.end < t)
         if (ended) return ended.end
       }
     }
@@ -203,7 +201,7 @@ function stepMercury(t: Date, dir: 1 | -1): Date {
     } else {
       const current = last(boundaries, boundary => boundary.time <= t)
       if (current) {
-        if (current.to === 'none') return current.time
+        if (current.to === 'none' && current.time < t) return current.time
         const previous = last(boundaries, boundary => boundary.time < current.time)
         if (previous) return previous.time
       }

@@ -40,38 +40,6 @@ function emptyBundle(start: number, end: number): EventBundle {
   }
 }
 
-function mercuryForRange(start: number, end: number): MercuryCycle[] {
-  const pad = MERCURY_SEARCH_DAYS * DAY_MS
-  const lo = start - pad
-  const hi = end + pad
-  const cycles = mercuryCycles(new Date(lo), new Date(hi))
-  const escapes = cycles.some(
-    cycle => cycle.preShadowStart.getTime() < lo || cycle.postShadowEnd.getTime() > hi,
-  )
-  if (!escapes) return cycles
-  const wide = 2 * pad
-  const wideStart = start - wide
-  const wideEnd = end + wide
-  return mercuryCycles(new Date(wideStart), new Date(wideEnd))
-    .filter(cycle => cycle.preShadowStart.getTime() < hi && lo < cycle.postShadowEnd.getTime())
-    .map(cycle => ({
-      preShadowStart: new Date(
-        Math.min(
-          Math.max(cycle.preShadowStart.getTime(), wideStart),
-          cycle.stationRetro.getTime(),
-        ),
-      ),
-      stationRetro: cycle.stationRetro,
-      stationDirect: cycle.stationDirect,
-      postShadowEnd: new Date(
-        Math.max(
-          Math.min(cycle.postShadowEnd.getTime(), wideEnd),
-          cycle.stationDirect.getTime(),
-        ),
-      ),
-    }))
-}
-
 function bundleForMonth(year: number, month: number): EventBundle {
   const key = `${year}-${month}`
   const cached = monthCache.get(key)
@@ -90,7 +58,10 @@ function bundleForMonth(year: number, month: number): EventBundle {
       signs: signIngresses(new Date(start), new Date(end)),
       mansions: mansionIngresses(new Date(start), new Date(end)),
       voids: voidPeriods(new Date(start), new Date(end)),
-      mercury: mercuryForRange(start, end),
+      mercury: mercuryCycles(
+        new Date(start - MERCURY_SEARCH_DAYS * DAY_MS),
+        new Date(end + MERCURY_SEARCH_DAYS * DAY_MS),
+      ),
     }
   }
   monthCache.set(key, bundle)

@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest'
-import { signIngresses } from '../../src/astro'
+import { mercuryCycles, signIngresses, voidPeriods } from '../../src/astro'
 import { nowSummary, stepEvent } from '../../src/calendar/now'
 import { SEC, expectWithin } from '../astro/helpers'
 
@@ -110,6 +110,16 @@ describe("stepEvent('void')", () => {
     expectWithin(stepEvent('void', t, -1), ARIES, MOON_TOL)
     expectWithin(stepEvent('void', t, 1), TAURUS, MOON_TOL)
   })
+
+  test('backward from exactly a void end returns the previous boundary, not t', () => {
+    const period = voidPeriods(
+      new Date('2026-11-19T00:00:00Z'),
+      new Date('2026-11-21T00:00:00Z'),
+    ).find(p => Math.abs(p.end.getTime() - Date.parse(ARIES)) <= MOON_TOL * SEC)!
+    const prev = stepEvent('void', period.end, -1)
+    expect(prev.getTime()).toBeLessThan(period.end.getTime() - 5 * SEC)
+    expectWithin(prev, PISCES, MOON_TOL)
+  })
 })
 
 describe("stepEvent('mercury')", () => {
@@ -122,5 +132,19 @@ describe("stepEvent('mercury')", () => {
     const t = new Date('2026-09-15T12:00:00Z')
     expectWithin(stepEvent('mercury', t, -1), '2026-08-07T03:36:53Z', MERCURY_TOL)
     expectWithin(stepEvent('mercury', t, 1), '2026-10-04T09:10:52Z', MERCURY_TOL)
+  })
+
+  test('backward from exactly the post-shadow end returns the station direct, not t', () => {
+    const cycle = mercuryCycles(
+      new Date('2026-11-01T00:00:00Z'),
+      new Date('2026-12-01T00:00:00Z'),
+    ).find(
+      c =>
+        c.stationRetro.getTime() >= Date.parse('2026-10-01T00:00:00Z') &&
+        c.stationRetro.getTime() < Date.parse('2026-12-01T00:00:00Z'),
+    )!
+    const prev = stepEvent('mercury', cycle.postShadowEnd, -1)
+    expect(prev.getTime()).toBeLessThan(cycle.postShadowEnd.getTime() - 5 * SEC)
+    expect(Math.abs(prev.getTime() - cycle.stationDirect.getTime())).toBeLessThanOrEqual(60 * SEC)
   })
 })
