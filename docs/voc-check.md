@@ -9,9 +9,10 @@ Lunarium's published tables, and which planet set was chosen.
   2027, downloaded by `tools/lunarium/fetch.ts` into `local/lunarium/<year>.json`
   as UTC ISO periods. The tables are not in the repository.
 - Generated: `voidPeriods()` from `src/astro` over the same range.
-- A period belongs to the year that contains its start. Each year is compared
-  over the intersection of the calendar year and the table's range, padded by
-  120 s at the table edges because the printed edges are floored minutes.
+- A period is counted for a year only when its start and its end both lie
+  inside that year's comparison window: the intersection of the calendar year
+  and the table's range, padded by 120 s at the table edges because the
+  printed edges are floored minutes.
 - Matching: sort both sides by start, then pair one-to-one with a two-pointer
   walk. A pair counts only when the start and the end both differ by at most
   the tolerance. A reference period left unpaired counts as a miss, and so

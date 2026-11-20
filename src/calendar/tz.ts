@@ -61,13 +61,15 @@ export function toLocal(t: Date, tz: string): LocalTime {
   for (const part of parts) {
     if (part.type !== 'literal') fields[part.type] = part.value
   }
+  const weekday = WEEKDAY_INDEX[fields.weekday]
+  if (weekday === undefined) throw new Error(`unrecognized weekday: ${fields.weekday}`)
   return {
     y: Number(fields.year),
     m: Number(fields.month),
     d: Number(fields.day),
     h: Number(fields.hour),
     min: Number(fields.minute),
-    weekday: WEEKDAY_INDEX[fields.weekday] ?? 0,
+    weekday,
   }
 }
 
@@ -75,7 +77,8 @@ function zoneOffsetMs(t: number, tz: string): number {
   const part = offsetFormatter(tz)
     .formatToParts(t)
     .find(p => p.type === 'timeZoneName')
-  const text = part?.value ?? 'GMT'
+  if (!part) throw new Error(`no timeZoneName part for ${tz}`)
+  const text = part.value
   if (text === 'GMT') return 0
   const match = /^GMT([+-])(\d{1,2}):?(\d{2})?$/.exec(text)
   if (!match) throw new Error(`unrecognized offset: ${text}`)
@@ -100,7 +103,7 @@ export function fromLocal(date: LocalDate, h: number, min: number, tz: string): 
     before === after ? [before] : [Math.max(before, after), Math.min(before, after)]
   const valid = candidates.map(offset => naive - offset).filter(t => isWallTime(t, date, h, min, tz))
   if (valid.length > 0) return new Date(Math.min(...valid))
-  return new Date(naive - before + (after - before))
+  return new Date(naive - before)
 }
 
 export function dayBounds(date: LocalDate, tz: string): { start: Date; end: Date } {
@@ -113,7 +116,9 @@ function dayStart(date: LocalDate, tz: string): Date {
   const naive = naiveUtc(date, 0, 0)
   const before = zoneOffsetMs(naive - DAY_MS, tz)
   const after = zoneOffsetMs(naive + DAY_MS, tz)
-  if (before === after) return t
+  if (before === after) {
+    throw new Error(`midnight of ${date.y}-${date.m}-${date.d} is invalid in ${tz} but no clock change was found`)
+  }
   let lo = naive - DAY_MS
   let hi = naive + DAY_MS
   while (hi - lo > 1) {

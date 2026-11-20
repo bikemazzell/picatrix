@@ -47,7 +47,10 @@ interface Row {
 
 async function download(year: number): Promise<void> {
   const path = `${DIR}/${year}.html`
-  if (existsSync(path)) return
+  if (existsSync(path)) {
+    console.log(`${year}: using cached ${year}.html`)
+    return
+  }
   const res = await fetch(`https://lunarium.co.uk/calendars/void-of-course/${year}/`, {
     headers: { 'User-Agent': UA },
   })
@@ -106,6 +109,7 @@ async function main(): Promise<void> {
   for (const year of YEARS) {
     await download(year)
     const rows = parseYear(year)
+    if (rows.length === 0) throw new Error(`${year}: no periods parsed`)
     writeFileSync(`${DIR}/${year}.json`, `${JSON.stringify(rows, null, 2)}\n`)
     console.log(`${year}: ${rows.length} periods, ${rows[0].start} .. ${rows[rows.length - 1].end}`)
   }

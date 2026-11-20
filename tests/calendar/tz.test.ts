@@ -74,9 +74,22 @@ describe('fromLocal', () => {
     expect(t.toISOString()).toBe('2026-10-25T00:30:00.000Z')
   })
 
-  test('shifts a nonexistent spring-forward time by the gap length', () => {
+  test('maps a 30-minute fall-back time to the earlier occurrence on Lord Howe', () => {
+    const t = fromLocal({ y: 2026, m: 4, d: 5 }, 1, 15, 'Australia/Lord_Howe')
+    expect(t.toISOString()).toBe('2026-04-04T14:15:00.000Z')
+    expect(toLocal(t, 'Australia/Lord_Howe')).toMatchObject({ m: 4, d: 5, h: 1, min: 15 })
+  })
+
+  test('resolves a nonexistent spring-forward time to the post-gap wall time', () => {
     const t = fromLocal({ y: 2026, m: 3, d: 8 }, 2, 30, 'America/New_York')
-    expect(t.toISOString()).toBe('2026-03-08T08:30:00.000Z')
+    expect(t.toISOString()).toBe('2026-03-08T07:30:00.000Z')
+    expect(toLocal(t, 'America/New_York')).toMatchObject({ h: 3, min: 30 })
+  })
+
+  test('resolves a 30-minute spring-forward gap to the post-gap wall time on Lord Howe', () => {
+    const t = fromLocal({ y: 2026, m: 10, d: 4 }, 2, 15, 'Australia/Lord_Howe')
+    expect(t.toISOString()).toBe('2026-10-03T15:45:00.000Z')
+    expect(toLocal(t, 'Australia/Lord_Howe')).toMatchObject({ m: 10, d: 4, h: 2, min: 45 })
   })
 
   test('resolves normal wall times on both sides of a New York clock change', () => {

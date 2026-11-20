@@ -17,6 +17,10 @@ describe.skipIf(!TABLES)('void-of-course fit against Lunarium', () => {
         fit.rate,
         `rate ${fit.rate} (matched ${fit.matched} of ${fit.reference}) is below the floor ${FLOOR}`,
       ).toBeGreaterThanOrEqual(FLOOR)
+      expect(
+        fit.misses,
+        `${fit.misses.length} unmatched or mismatched periods: ${JSON.stringify(fit.misses)}`,
+      ).toHaveLength(0)
     },
     120_000,
   )
