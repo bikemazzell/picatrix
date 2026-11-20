@@ -1,0 +1,8 @@
+node_modules/
+dist/
+reference/
+research/
+reviews/
+local/
+tools/reference/.venv/
+tools/reference/*.bsp
