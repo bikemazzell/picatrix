@@ -171,33 +171,24 @@ function Card({
     )
   }
   return (
-    <article
-      class="card"
-      data-feature={feature}
-      data-pinned={pinned ? 'true' : undefined}
-      onClick={() => onOpen(contentId(summary, feature))}
-    >
+    <article class="card" data-feature={feature}>
+      <button
+        type="button"
+        class="card-open"
+        aria-label={`Open ${feature} details`}
+        onClick={() => onOpen(contentId(summary, feature))}
+      />
       <div class="card-head">
         <h2>{HEADINGS[feature]}</h2>
         <div class="card-steps">
           <button
             type="button"
             aria-label={`Previous ${feature}`}
-            onClick={event => {
-              event.stopPropagation()
-              onStep(feature, -1)
-            }}
+            onClick={() => onStep(feature, -1)}
           >
             ‹
           </button>
-          <button
-            type="button"
-            aria-label={`Next ${feature}`}
-            onClick={event => {
-              event.stopPropagation()
-              onStep(feature, 1)
-            }}
-          >
+          <button type="button" aria-label={`Next ${feature}`} onClick={() => onStep(feature, 1)}>
             ›
           </button>
         </div>
@@ -212,13 +203,20 @@ function Card({
 // can differ by ~0.1s; land just inside the span the step targets, not on it.
 const STEP_INSIDE_MS = 1_000
 
-function steppedCursor(feature: Feature, from: Date, dir: 1 | -1): Date {
-  const boundary = stepEvent(feature, from, dir)
+function steppedCursor(feature: Feature, from: Date, dir: 1 | -1): Date | null {
+  let boundary: Date
+  try {
+    boundary = stepEvent(feature, from, dir)
+  } catch {
+    return null
+  }
   const inside = feature === 'void' && dir === -1 ? -STEP_INSIDE_MS : STEP_INSIDE_MS
   return new Date(boundary.getTime() + inside)
 }
 
-export function Now({ now: nowFn = () => new Date() }: { now?: () => Date }) {
+const liveNow = () => new Date()
+
+export function Now({ now: nowFn = liveNow }: { now?: () => Date }) {
   const [settings] = useSettings()
   const tz = effectiveTimeZone(settings)
   const clock = settings.clock
@@ -227,14 +225,22 @@ export function Now({ now: nowFn = () => new Date() }: { now?: () => Date }) {
   const [sheetId, setSheetId] = useState<string | null>(null)
 
   useEffect(() => {
-    const id = setInterval(() => {
+    const refresh = () => {
       if (document.visibilityState === 'visible') setBase(nowFn())
-    }, 60_000)
-    return () => clearInterval(id)
+    }
+    const id = setInterval(refresh, 60_000)
+    document.addEventListener('visibilitychange', refresh)
+    return () => {
+      clearInterval(id)
+      document.removeEventListener('visibilitychange', refresh)
+    }
   }, [nowFn])
 
   const onStep = (feature: Feature, dir: 1 | -1) => {
-    setCursors(prev => ({ ...prev, [feature]: steppedCursor(feature, prev[feature] ?? base, dir) }))
+    setCursors(prev => {
+      const next = steppedCursor(feature, prev[feature] ?? base, dir)
+      return next === null ? prev : { ...prev, [feature]: next }
+    })
   }
 
   const backToNow = () => {

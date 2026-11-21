@@ -159,10 +159,26 @@ main {
 }
 
 .card {
+  position: relative;
   padding: 0.75rem 1rem;
   border: 1px solid var(--line);
   border-radius: 0.75rem;
+}
+
+.card-open {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
   cursor: pointer;
+}
+
+.card-open:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -4px;
 }
 
 .card-head {
@@ -182,6 +198,8 @@ main {
 }
 
 .card-steps {
+  position: relative;
+  z-index: 1;
   display: flex;
   gap: 0.25rem;
 }
