@@ -61,6 +61,21 @@ describe('loadSettings', () => {
     expect(s.theme).toBe('dark')
   })
 
+  it('rejects a hostile stored payload field by field', () => {
+    const deviceClock = loadSettings().clock
+    window.localStorage.setItem(
+      'picatrix.settings',
+      '{"timeZone":"Not/AZone","clock":"metric","textScale":"abc","features":{"phase":"yes","sign":false},"theme":"dark"}',
+    )
+    const s = loadSettings()
+    expect(s.timeZone).toBeNull()
+    expect(s.clock).toBe(deviceClock)
+    expect(s.textScale).toBe(1)
+    expect(s.features.phase).toBe(true)
+    expect(s.features.sign).toBe(false)
+    expect(s.theme).toBe('dark')
+  })
+
   it('returns defaults for malformed stored JSON', () => {
     window.localStorage.setItem('picatrix.settings', '{not json')
     const s = loadSettings()

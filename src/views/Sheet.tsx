@@ -1,4 +1,4 @@
-import { useEffect } from 'preact/hooks'
+import { useEffect, useRef } from 'preact/hooks'
 import { getContent } from '../content/load'
 import type { ContentEntry } from '../content/load'
 
@@ -35,6 +35,17 @@ function Blocks({ text }: { text: string }) {
 export function Sheet({ contentId, onClose }: { contentId: string; onClose: () => void }) {
   const entry = getContent(contentId)
   const sections = entry.sections
+  const sheetRef = useRef<HTMLElement | null>(null)
+  useEffect(() => {
+    const previouslyFocused = document.activeElement as HTMLElement | null
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    sheetRef.current?.focus()
+    return () => {
+      document.body.style.overflow = previousOverflow
+      if (previouslyFocused !== null) previouslyFocused.focus()
+    }
+  }, [])
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
@@ -45,6 +56,8 @@ export function Sheet({ contentId, onClose }: { contentId: string; onClose: () =
   return (
     <div class="sheet-backdrop" onClick={onClose}>
       <section
+        ref={sheetRef}
+        tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-label={entry.title}
