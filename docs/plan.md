@@ -263,10 +263,10 @@ Each item has a test in the task that owns the code (Tasks 5, 6, 10).
 - Create: `src/views/SettingsView.tsx`, `src/views/About.tsx`
 - Test: `tests/views/settings-view.test.tsx`
 
-- [ ] **Step 1:** Write the test: the time zone picker lists `Intl.supportedValuesOf('timeZone')` with a search box and a "Use device time zone" choice. Choosing Asia/Kolkata saves it and the Day view then uses it. The clock toggle, the text size control (sets `--text-scale` on the root), the five feature switches, and the theme choice each save. About shows the version, the MIT license, the date range, a note that only the time zone matters, the element color key, a credit to iLuna by Alexander Kolesnikov as the inspiration, and a note that texts are paraphrases adapted from Picatrix (Ghāyat al-Ḥakīm), translated by Dan Attrell and David Porreca (Penn State Press, 2019).
-- [ ] **Step 2:** Run it. Expected: FAIL. Implement.
-- [ ] **Step 3:** Run it. Expected: PASS.
-- [ ] **Step 4:** Commit: `feat(ui): Settings and About views`.
+- [x] **Step 1:** Write the test: the time zone picker lists `Intl.supportedValuesOf('timeZone')` with a search box and a "Use device time zone" choice. Choosing Asia/Kolkata saves it and the Day view then uses it. The clock toggle, the text size control (sets `--text-scale` on the root), the five feature switches, and the theme choice each save. About shows the version, the MIT license, the date range, a note that only the time zone matters, the element color key, a credit to iLuna by Alexander Kolesnikov as the inspiration, and a note that texts are paraphrases adapted from Picatrix (Ghāyat al-Ḥakīm), translated by Dan Attrell and David Porreca (Penn State Press, 2019).
+- [x] **Step 2:** Run it. Expected: FAIL. Implement.
+- [x] **Step 3:** Run it. Expected: PASS.
+- [x] **Step 4:** Commit: `feat(ui): Settings and About views`.
 
 ### Task 13: Offline install and deployment
 
