@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import { Nav } from './views/Nav'
+import { Now } from './views/Now'
 
 export type Route =
   | { view: 'now' }
@@ -33,7 +34,7 @@ function Placeholder({ route }: { route: Route }) {
     case 'about':
       return <h1>About</h1>
     case 'now':
-      return <h1>Now</h1>
+      return <Now />
   }
 }
 
