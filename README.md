@@ -29,7 +29,7 @@ Now shows one card for each of the five items, for the current moment. Use the a
 
 Day lists every change during one day, with times in your time zone. Use the arrows to move one day, or the calendar button to jump to a date.
 
-Month shows a calendar. Each day shows its date, its mansion numbers, small symbols for Moon phases, sign changes, and Mercury retrograde, and a colored bar. The bar shows the element of the Moon's sign through the day: red for fire, green for earth, yellow for air, blue for water, and gray for void of course. Today has its date in a filled circle. Select a day to open it in Day.
+Month shows a calendar. Each day shows its date, its mansion numbers, small symbols for Moon phases, sign changes, and Mercury retrograde, and a colored bar. The bar shows the element of the Moon's sign through the day: red for fire, green for earth, yellow for air, blue for water, and gray for void of course. Today has a violet outline and its date in a violet circle. Select a day to open it in Day.
 
 Select any card or row to open its lore. Close the lore with the Close button, the Escape key, or a tap outside it.
 

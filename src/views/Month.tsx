@@ -74,6 +74,7 @@ function Cell({
       type="button"
       class={classes.join(' ')}
       aria-label={cellLabel(cell)}
+      aria-current={today ? 'date' : undefined}
       disabled={!cell.inRange}
       onClick={() => {
         location.hash = `#/day/${dayKey(cell.date)}`

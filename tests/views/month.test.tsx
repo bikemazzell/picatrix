@@ -64,6 +64,8 @@ test('renders 42 cells with the pinned Nov 2026 marks at the fixed clock', () =>
   expect(within(nov20).getByText('2')).toBeTruthy()
   expect(nov20.classList.contains('today')).toBe(true)
   expect(cell(container, '2026-11-21').classList.contains('today')).toBe(false)
+  expect(nov20.getAttribute('aria-current')).toBe('date')
+  expect(container.querySelectorAll('[aria-current="date"]')).toHaveLength(1)
 })
 
 test('shows the full Moon glyph on Nov 24 and the new Moon glyph on Nov 9', () => {
