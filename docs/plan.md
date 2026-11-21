@@ -213,11 +213,11 @@ Each item has a test in the task that owns the code (Tasks 5, 6, 10).
   - Glyph components: `<MoonGlyph fraction waxing />`, `<SignGlyph sign />`, `<PlanetGlyph planet />`, `<AspectGlyph angle />`, `<MansionBadge n />`, as inline SVG or Unicode with a bundled font. No remote font.
   - Routes by hash: `#/now`, `#/day/YYYY-MM-DD`, `#/month/YYYY-MM`, `#/settings`, `#/about`.
 
-- [ ] **Step 1:** Write `tests/settings.test.ts`: defaults when storage is empty. A round trip. Review Focus 5: with `localStorage.getItem` stubbed to throw, `loadSettings()` returns defaults and `saveSettings` does not throw. An invalid stored time zone falls back to `null`.
-- [ ] **Step 2:** Write `tests/views/sheet.test.tsx`: rendering `<Sheet contentId="mansion/28" />` shows "Batn al-Hut" and the four section headings (Essence, Good For, Not Good For, Talisman). Pressing Escape calls `onClose`.
-- [ ] **Step 3:** Run both. Expected: FAIL. Implement. Default `clock` comes from `Intl.DateTimeFormat().resolvedOptions().hourCycle`.
-- [ ] **Step 4:** Run both. Expected: PASS. Run `npm run dev` and open the page at 400 px width. Expected: the nav bar with Now, Day, Month, Settings, About, and an empty view.
-- [ ] **Step 5:** Commit: `feat(ui): settings store, routing shell, description sheet, glyphs`.
+- [x] **Step 1:** Write `tests/settings.test.ts`: defaults when storage is empty. A round trip. Review Focus 5: with `localStorage.getItem` stubbed to throw, `loadSettings()` returns defaults and `saveSettings` does not throw. An invalid stored time zone falls back to `null`.
+- [x] **Step 2:** Write `tests/views/sheet.test.tsx`: rendering `<Sheet contentId="mansion/28" />` shows "Batn al-Hut" and the four section headings (Essence, Good For, Not Good For, Talisman). Pressing Escape calls `onClose`.
+- [x] **Step 3:** Run both. Expected: FAIL. Implement. Default `clock` comes from `Intl.DateTimeFormat().resolvedOptions().hourCycle`.
+- [x] **Step 4:** Run both. Expected: PASS. Run `npm run dev` and open the page at 400 px width. Expected: the nav bar with Now, Day, Month, Settings, About, and an empty view.
+- [x] **Step 5:** Commit: `feat(ui): settings store, routing shell, description sheet, glyphs`.
 
 ### Task 9: Now view
 
