@@ -152,3 +152,17 @@ describe('front matter grammar', () => {
     }
   })
 })
+
+describe('entry bodies', () => {
+  it('drops HTML comments, such as the void generator header, from every body', () => {
+    for (const id of allContentIds()) {
+      const entry = getContent(id)
+      const text = [entry.body, ...Object.values(entry.sections ?? {})].join('\n')
+      expect(text, id).not.toMatch(/<!--|-->/)
+    }
+  })
+
+  it('keeps the void prose after the generator header', () => {
+    expect(getContent('void/90-mars').body).toMatch(/^The square is one of the two worst aspects/)
+  })
+})

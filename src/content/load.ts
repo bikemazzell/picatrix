@@ -33,7 +33,10 @@ function parseFrontMatter(
   const lines = raw.split('\n')
   const blank = lines.indexOf('')
   const head = blank === -1 ? lines : lines.slice(0, blank)
-  const body = (blank === -1 ? [] : lines.slice(blank + 1)).join('\n').trim()
+  const body = (blank === -1 ? [] : lines.slice(blank + 1))
+    .join('\n')
+    .replace(/<!--[\s\S]*?-->\n*/g, '')
+    .trim()
   const pairs = head.map(line => {
     const colon = line.indexOf(':')
     return colon === -1 ? null : [line.slice(0, colon), line.slice(colon + 1).trim()]
