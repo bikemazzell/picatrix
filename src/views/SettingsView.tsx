@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'preact/hooks'
-import { useSettings, type Settings } from '../settings'
+import { applyPresentation, useSettings, type Settings } from '../settings'
 import { FEATURES, HEADINGS } from './features'
 
 const ZONE_ALIASES: Record<string, string> = {
@@ -26,14 +26,8 @@ export function SettingsView() {
   const [query, setQuery] = useState('')
 
   useEffect(() => {
-    document.documentElement.style.setProperty('--text-scale', String(settings.textScale))
-  }, [settings.textScale])
-
-  useEffect(() => {
-    const root = document.documentElement
-    if (settings.theme === 'system') root.removeAttribute('data-theme')
-    else root.setAttribute('data-theme', settings.theme)
-  }, [settings.theme])
+    applyPresentation(settings)
+  }, [settings])
 
   const zones = useMemo(() => {
     if (ALL_ZONES === null) return null

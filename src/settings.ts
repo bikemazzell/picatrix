@@ -89,6 +89,13 @@ export function effectiveTimeZone(s: Settings): string {
   return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
 }
 
+export function applyPresentation(s: Settings): void {
+  const root = document.documentElement
+  root.style.setProperty('--text-scale', String(s.textScale))
+  if (s.theme === 'system') root.removeAttribute('data-theme')
+  else root.setAttribute('data-theme', s.theme)
+}
+
 export function useSettings(): [Settings, (s: Settings) => void] {
   const [settings, setSettings] = useState(loadSettings)
   const update = useCallback((next: Settings) => {
