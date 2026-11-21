@@ -1,5 +1,5 @@
 import { cleanup, fireEvent, render, screen } from '@testing-library/preact'
-import { afterEach, expect, test } from 'vitest'
+import { afterEach, expect, test, vi } from 'vitest'
 import { version } from '../../package.json'
 import { App } from '../../src/app'
 import type { Feature } from '../../src/calendar/types'
@@ -24,6 +24,10 @@ function seed(timeZone: string | null = null) {
   )
 }
 
+function openPicker() {
+  fireEvent.click(screen.getByRole('button', { name: 'Change' }))
+}
+
 function stored(): {
   timeZone: string | null
   clock: string
@@ -45,6 +49,7 @@ afterEach(() => {
 test('the time zone picker caps the unfiltered list and filters by search', () => {
   seed()
   const { container } = render(<SettingsView />)
+  openPicker()
   const hint = screen.getByText(/^Type to search all \d+ zones$/)
   const total = Number(/^Type to search all (\d+) zones$/.exec(hint.textContent ?? '')?.[1])
   expect(total).toBeGreaterThanOrEqual(400)
@@ -62,6 +67,7 @@ test('the time zone picker caps the unfiltered list and filters by search', () =
 test('choosing Asia/Kolkata saves it and the Day view then uses it', () => {
   seed()
   render(<SettingsView />)
+  openPicker()
   fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Kolkata' } })
   fireEvent.click(screen.getByRole('button', { name: 'Asia/Kolkata' }))
   expect(stored().timeZone).toBe('Asia/Kolkata')
@@ -75,6 +81,7 @@ test('choosing Asia/Kolkata saves it and the Day view then uses it', () => {
 test('legacy zone ids surface as their canonical buttons', () => {
   seed('Asia/Calcutta')
   render(<SettingsView />)
+  openPicker()
   fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Kolkata' } })
   expect(screen.getByRole('button', { name: 'Asia/Kolkata' }).getAttribute('aria-pressed')).toBe(
     'true',
@@ -88,8 +95,66 @@ test('legacy zone ids surface as their canonical buttons', () => {
 test('Use device time zone nulls the stored zone', () => {
   seed('Asia/Kolkata')
   render(<SettingsView />)
+  openPicker()
   fireEvent.click(screen.getByRole('button', { name: 'Use device time zone' }))
   expect(stored().timeZone).toBeNull()
+})
+
+test('the picker is closed until Change, and a pick or Cancel closes it again', () => {
+  seed('Asia/Kolkata')
+  const { container } = render(<SettingsView />)
+  expect(container.querySelector('.zone-list')).toBeNull()
+  expect(screen.getByText('Asia/Kolkata')).toBeTruthy()
+  openPicker()
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Tokyo' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Asia/Tokyo' }))
+  expect(container.querySelector('.zone-list')).toBeNull()
+  expect(screen.getByText('Asia/Tokyo')).toBeTruthy()
+  openPicker()
+  fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+  expect(container.querySelector('.zone-list')).toBeNull()
+  expect(stored().timeZone).toBe('Asia/Tokyo')
+})
+
+test('the device time zone shows its resolved name', () => {
+  seed()
+  render(<SettingsView />)
+  const device = Intl.DateTimeFormat().resolvedOptions().timeZone
+  expect(screen.getByText(`Device time zone (${device})`)).toBeTruthy()
+})
+
+test('a failed save shows a warning and still applies the change', () => {
+  seed()
+  render(<SettingsView />)
+  const setItem = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+    throw new DOMException('full', 'QuotaExceededError')
+  })
+  try {
+    fireEvent.change(screen.getByLabelText('Theme'), { target: { value: 'dark' } })
+    expect(screen.getByRole('alert').textContent).toMatch(/did not save your settings/)
+    expect(document.documentElement.getAttribute('data-theme')).toBe('dark')
+  } finally {
+    setItem.mockRestore()
+  }
+})
+
+test('a time zone change reaches the nav Day link without navigation', () => {
+  seed('Pacific/Kiritimati')
+  location.hash = '#/settings'
+  const { container } = render(<App />)
+  const dayHref = () => container.querySelector('nav a[href^="#/day/"]')?.getAttribute('href')
+  const before = dayHref()
+  openPicker()
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Pago_Pago' } })
+  fireEvent.click(screen.getByRole('button', { name: 'Pacific/Pago_Pago' }))
+  expect(dayHref()).not.toBe(before)
+})
+
+test('the clock offers the device default and stores it as auto', () => {
+  seed()
+  render(<SettingsView />)
+  fireEvent.change(screen.getByLabelText('Clock'), { target: { value: 'auto' } })
+  expect(stored().clock).toBe('auto')
 })
 
 test('the clock choice saves', () => {
@@ -151,7 +216,10 @@ test('About shows the version, license, range, privacy note, color key, and cred
   for (const label of ['Fire', 'Earth', 'Air', 'Water', 'Void']) {
     expect(screen.getByText(label)).toBeTruthy()
   }
-  expect(screen.getByText('Inspired by iLuna by Alexander Kolesnikov.')).toBeTruthy()
+  expect(screen.getByRole('link', { name: '@bikemazzell' }).getAttribute('href')).toBe(
+    'https://github.com/bikemazzell',
+  )
+  expect(screen.queryByText(/iLuna/)).toBeNull()
   expect(
     screen.getByText(
       'Texts are paraphrases adapted from Picatrix (Ghāyat al-Ḥakīm), translated by Dan Attrell and David Porreca (Penn State Press, 2019).',

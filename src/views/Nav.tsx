@@ -1,15 +1,15 @@
 import { toLocal } from '../calendar/tz'
-import { effectiveTimeZone, loadSettings } from '../settings'
+import { effectiveTimeZone, useSettings } from '../settings'
 import type { Route } from '../app'
 
-function todayYMD(): string {
-  const tz = effectiveTimeZone(loadSettings())
+function todayYMD(tz: string): string {
   const t = toLocal(new Date(), tz)
   return `${t.y}-${String(t.m).padStart(2, '0')}-${String(t.d).padStart(2, '0')}`
 }
 
 export function Nav({ view }: { view: Route['view'] }) {
-  const today = todayYMD()
+  const [settings] = useSettings()
+  const today = todayYMD(effectiveTimeZone(settings))
   const links: ReadonlyArray<{ view: Route['view']; href: string; label: string }> = [
     { view: 'now', href: '#/now', label: 'Now' },
     { view: 'day', href: `#/day/${today}`, label: 'Day' },

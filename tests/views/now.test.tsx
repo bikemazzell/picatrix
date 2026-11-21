@@ -37,11 +37,11 @@ test('shows every card at the fixed clock', () => {
   expect(screen.getByText('Waxing')).toBeTruthy()
   expect(screen.getByText('Aries')).toBeTruthy()
   expect(screen.getByText('until 2026-11-22, 5:09 AM')).toBeTruthy()
-  expect(screen.getByText('Later')).toBeTruthy()
+  expect(screen.getByText('Next void')).toBeTruthy()
   expect(screen.getByText('from 2:38 AM to 5:09 AM')).toBeTruthy()
   expect(screen.getByText('Al-Sharatain')).toBeTruthy()
   expect(screen.getByText('until 2026-11-20, 11:46 PM')).toBeTruthy()
-  expect(screen.getByText('leaving')).toBeTruthy()
+  expect(screen.getByText('Post-shadow')).toBeTruthy()
 })
 
 test('the sign card next control moves that card to Taurus and Now resets it', () => {
@@ -82,8 +82,8 @@ test('the mansion card is absent when the feature is off, and the others remain'
   expect(screen.queryByText('Al-Sharatain')).toBeNull()
   expect(screen.getByText('Waxing')).toBeTruthy()
   expect(screen.getByText('Aries')).toBeTruthy()
-  expect(screen.getByText('Later')).toBeTruthy()
-  expect(screen.getByText('leaving')).toBeTruthy()
+  expect(screen.getByText('Next void')).toBeTruthy()
+  expect(screen.getByText('Post-shadow')).toBeTruthy()
 })
 
 test('a device clock outside the supported range renders no-data cards instead of crashing', () => {

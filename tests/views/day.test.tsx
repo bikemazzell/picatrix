@@ -53,7 +53,7 @@ test('renders the pinned sections for the 2026-11-20 route', () => {
   expect(screen.getByText('Batn al-Hut until 12:52 AM')).toBeTruthy()
   expect(screen.getByText('Al-Sharatain, 12:52 AM – 11:46 PM')).toBeTruthy()
   expect(screen.getByText('Al-Butain after 11:46 PM')).toBeTruthy()
-  expect(screen.getByText('leaving')).toBeTruthy()
+  expect(screen.getByText('Post-shadow')).toBeTruthy()
   expect(screen.getByText('until 2026-11-30, 1:16 AM')).toBeTruthy()
 })
 
@@ -92,7 +92,7 @@ test('rows open the sheet with the derived content', () => {
   expect(screen.getByRole('dialog', { name: 'Batn al-Hut' })).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: 'Close' }))
   fireEvent.click(screen.getByText('Until 12:52 AM'))
-  expect(screen.getByRole('dialog', { name: 'Void Ending in a Trine to Sun' })).toBeTruthy()
+  expect(screen.getByRole('dialog', { name: 'Void Ending in a Trine to the Sun' })).toBeTruthy()
 })
 
 test('sign and mansion row glyphs stay silent while the void aspect glyph keeps its label', () => {
@@ -123,7 +123,7 @@ test('a day with a phase event shows the state at day start and the event', () =
 test('a Mercury station day lists its transition', () => {
   seed()
   render(<Day date="2026-11-13" />)
-  expect(screen.getByText('retrograde')).toBeTruthy()
+  expect(screen.getByText('Retrograde')).toBeTruthy()
   expect(screen.getByText('until 10:52 AM')).toBeTruthy()
   expect(screen.getByText('turns direct at 10:52 AM')).toBeTruthy()
 })
@@ -131,7 +131,7 @@ test('a Mercury station day lists its transition', () => {
 test('a quiet Mercury day points at the next cycle', () => {
   seed()
   render(<Day date="2026-12-05" />)
-  expect(screen.getByText('none')).toBeTruthy()
+  expect(screen.getByText('Direct')).toBeTruthy()
   expect(screen.getByText('next cycle from 2027-01-25, 1:58 PM')).toBeTruthy()
 })
 

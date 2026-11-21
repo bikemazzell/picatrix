@@ -1,10 +1,11 @@
-import { useCallback, useState } from 'preact/hooks'
+import { useCallback, useEffect, useState } from 'preact/hooks'
 import { isValidTimeZone } from './calendar/tz'
 import type { Feature } from './calendar/types'
+import type { Clock } from './format'
 
 export interface Settings {
   timeZone: string | null
-  clock: '12h' | '24h'
+  clock: 'auto' | Clock
   textScale: number
   features: Record<Feature, boolean>
   theme: 'system' | 'light' | 'dark'
@@ -15,7 +16,7 @@ const FEATURES: readonly Feature[] = ['phase', 'sign', 'void', 'mansion', 'mercu
 export const TEXT_SCALE_MIN = 0.8
 export const TEXT_SCALE_MAX = 1.5
 
-function defaultClock(): '12h' | '24h' {
+function deviceClock(): Clock {
   const { hourCycle, hour12 } = new Intl.DateTimeFormat(undefined, {
     hour: 'numeric',
   }).resolvedOptions()
@@ -26,7 +27,7 @@ function defaultClock(): '12h' | '24h' {
 function defaultSettings(): Settings {
   return {
     timeZone: null,
-    clock: defaultClock(),
+    clock: 'auto',
     textScale: 1,
     features: { phase: true, sign: true, void: true, mansion: true, mercury: true },
     theme: 'system',
@@ -51,7 +52,10 @@ function coerce(raw: unknown): Settings {
       typeof stored.timeZone === 'string' && isValidTimeZone(stored.timeZone)
         ? stored.timeZone
         : null,
-    clock: stored.clock === '12h' || stored.clock === '24h' ? stored.clock : defaults.clock,
+    clock:
+      stored.clock === 'auto' || stored.clock === '12h' || stored.clock === '24h'
+        ? stored.clock
+        : defaults.clock,
     textScale,
     features,
     theme:
@@ -76,12 +80,17 @@ export function loadSettings(): Settings {
   }
 }
 
-export function saveSettings(s: Settings): void {
+export function saveSettings(s: Settings): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(s))
+    return true
   } catch {
-    return
+    return false
   }
+}
+
+export function effectiveClock(s: Settings): Clock {
+  return s.clock === 'auto' ? deviceClock() : s.clock
 }
 
 export function effectiveTimeZone(s: Settings): string {
@@ -96,11 +105,32 @@ export function applyPresentation(s: Settings): void {
   else root.setAttribute('data-theme', s.theme)
 }
 
-export function useSettings(): [Settings, (s: Settings) => void] {
-  const [settings, setSettings] = useState(loadSettings)
-  const update = useCallback((next: Settings) => {
-    saveSettings(next)
-    setSettings(next)
+interface SettingsState {
+  settings: Settings
+  saved: boolean
+}
+
+const subscribers = new Set<(state: SettingsState) => void>()
+
+function publish(state: SettingsState): void {
+  for (const subscriber of subscribers) subscriber(state)
+}
+
+export function useSettings(): [Settings, (s: Settings) => void, boolean] {
+  const [state, setState] = useState<SettingsState>(() => ({ settings: loadSettings(), saved: true }))
+  useEffect(() => {
+    subscribers.add(setState)
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === STORAGE_KEY) setState({ settings: loadSettings(), saved: true })
+    }
+    window.addEventListener('storage', onStorage)
+    return () => {
+      subscribers.delete(setState)
+      window.removeEventListener('storage', onStorage)
+    }
   }, [])
-  return [settings, update]
+  const update = useCallback((next: Settings) => {
+    publish({ settings: next, saved: saveSettings(next) })
+  }, [])
+  return [state.settings, update, state.saved]
 }

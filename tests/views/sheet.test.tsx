@@ -20,3 +20,20 @@ test('pressing Escape calls onClose', () => {
   fireEvent.keyDown(window, { key: 'Escape' })
   expect(onClose).toHaveBeenCalledTimes(1)
 })
+
+test('Tab keeps focus inside the open sheet', () => {
+  const outside = document.createElement('button')
+  document.body.append(outside)
+  try {
+    render(<Sheet contentId="sign/aries" onClose={() => {}} />)
+    const close = screen.getByRole('button', { name: 'Close' })
+    close.focus()
+    fireEvent.keyDown(window, { key: 'Tab' })
+    expect(document.activeElement).toBe(close)
+    outside.focus()
+    fireEvent.keyDown(window, { key: 'Tab', shiftKey: true })
+    expect(document.activeElement).toBe(close)
+  } finally {
+    outside.remove()
+  }
+})

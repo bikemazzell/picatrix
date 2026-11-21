@@ -32,7 +32,10 @@ export function About() {
       </section>
       <section class="panel">
         <h2>Credits</h2>
-        <p>Inspired by iLuna by Alexander Kolesnikov.</p>
+        <p>
+          Made by <a href="https://github.com/bikemazzell">@bikemazzell</a>. Source code on{' '}
+          <a href="https://github.com/bikemazzell/picatrix">GitHub</a>.
+        </p>
         <p>
           Texts are paraphrases adapted from Picatrix (Ghāyat al-Ḥakīm), translated by Dan Attrell
           and David Porreca (Penn State Press, 2019).

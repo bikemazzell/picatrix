@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'preact/hooks'
 import {
   applyPresentation,
+  effectiveTimeZone,
   TEXT_SCALE_MAX,
   TEXT_SCALE_MIN,
   useSettings,
@@ -38,8 +39,9 @@ function supportedZones(): string[] | null {
 const ALL_ZONES = supportedZones()
 
 export function SettingsView() {
-  const [settings, update] = useSettings()
+  const [settings, update, saved] = useSettings()
   const [query, setQuery] = useState('')
+  const [picking, setPicking] = useState(false)
 
   useEffect(() => {
     applyPresentation(settings)
@@ -58,9 +60,25 @@ export function SettingsView() {
   const setTimeZone = (timeZone: string | null) =>
     update({ ...settings, timeZone: timeZone === null ? null : canonicalZone(timeZone) })
 
+  const pickTimeZone = (timeZone: string | null) => {
+    setTimeZone(timeZone)
+    setPicking(false)
+    setQuery('')
+  }
+
+  const currentZone =
+    settings.timeZone === null
+      ? `Device time zone (${effectiveTimeZone(settings)})`
+      : canonicalZone(settings.timeZone)
+
   return (
     <div class="settings-view">
       <h1>Settings</h1>
+      {!saved && (
+        <p class="save-warning" role="alert">
+          This browser did not save your settings. They apply now but reset when you reload.
+        </p>
+      )}
       <section class="panel">
         <h2>Time zone</h2>
         {zoneState === null ? (
@@ -75,13 +93,14 @@ export function SettingsView() {
               }}
             />
           </label>
-        ) : (
+        ) : picking ? (
           <>
-            <label class="field">
+            <label class="field field-stack">
               Search time zones
               <input
                 type="search"
                 value={query}
+                autoFocus
                 onInput={e => setQuery((e.currentTarget as HTMLInputElement).value)}
               />
             </label>
@@ -92,7 +111,7 @@ export function SettingsView() {
               type="button"
               class="zone-pick"
               aria-pressed={settings.timeZone === null}
-              onClick={() => setTimeZone(null)}
+              onClick={() => pickTimeZone(null)}
             >
               Use device time zone
             </button>
@@ -105,14 +124,24 @@ export function SettingsView() {
                     aria-pressed={
                       settings.timeZone !== null && canonicalZone(settings.timeZone) === zone
                     }
-                    onClick={() => setTimeZone(zone)}
+                    onClick={() => pickTimeZone(zone)}
                   >
                     {zone}
                   </button>
                 </li>
               ))}
             </ul>
+            <button type="button" class="zone-toggle" onClick={() => setPicking(false)}>
+              Cancel
+            </button>
           </>
+        ) : (
+          <div class="field">
+            <span class="zone-current">{currentZone}</span>
+            <button type="button" class="zone-toggle" onClick={() => setPicking(true)}>
+              Change
+            </button>
+          </div>
         )}
       </section>
       <section class="panel">
@@ -128,6 +157,7 @@ export function SettingsView() {
               })
             }
           >
+            <option value="auto">Device default</option>
             <option value="12h">12-hour</option>
             <option value="24h">24-hour</option>
           </select>

@@ -1,14 +1,15 @@
+import type { VNode } from 'preact'
 import { useEffect, useMemo, useState } from 'preact/hooks'
-import { nowSummary, stepEvent } from '../calendar/now'
+import { isSupported, nowSummary, stepEvent } from '../calendar/now'
 import type { Feature, NowSummary } from '../calendar/types'
 import { toLocal } from '../calendar/tz'
 import { MANSION_NAMES, SIGN_NAMES } from '../content/names'
 import type { VoidPeriod } from '../astro'
 import { formatDateTime, formatTime, type Clock } from '../format'
-import { effectiveTimeZone, useSettings } from '../settings'
+import { effectiveClock, effectiveTimeZone, useSettings } from '../settings'
 import { AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 import { Sheet } from './Sheet'
-import { FEATURES, HEADINGS } from './features'
+import { FEATURES, HEADINGS, MERCURY_LABELS } from './features'
 
 const QUARTER_NAMES: Record<number, string> = {
   0: 'New',
@@ -58,85 +59,57 @@ function voidLine(period: VoidPeriod, tz: string, clock: Clock): string {
   return `from ${formatDateTime(period.start, tz, clock)} to ${formatDateTime(period.end, tz, clock)}`
 }
 
-function CardBody({
-  summary,
-  feature,
-  tz,
-  clock,
-}: {
-  summary: NowSummary
-  feature: Feature
-  tz: string
-  clock: Clock
-}) {
+interface CardContent {
+  glyph: VNode | null
+  title: string
+  detail: string | null
+}
+
+function cardContent(summary: NowSummary, feature: Feature, tz: string, clock: Clock): CardContent {
   switch (feature) {
-    case 'phase':
-      return (
-        <>
-          <MoonGlyph
-            fraction={summary.phase.current.illumination}
-            waxing={summary.phase.current.waxing}
-          />
-          <p class="card-title">
-            {summary.phase.current.waxing ? 'Waxing' : 'Waning'}
-          </p>
-          {summary.phase.until && (
-            <p>
-              {`${QUARTER_NAMES[summary.phase.current.nextEvent.quarter]} ${formatDateTime(summary.phase.until, tz, clock)}`}
-            </p>
-          )}
-        </>
-      )
+    case 'phase': {
+      const { current } = summary.phase
+      return {
+        glyph: <MoonGlyph fraction={current.illumination} waxing={current.waxing} />,
+        title: current.waxing ? 'Waxing' : 'Waning',
+        detail:
+          summary.phase.until &&
+          `${QUARTER_NAMES[current.nextEvent.quarter]} ${formatDateTime(summary.phase.until, tz, clock)}`,
+      }
+    }
     case 'sign':
-      return (
-        <>
-          <SignGlyph sign={summary.sign.current} />
-          <p class="card-title">{SIGN_NAMES[summary.sign.current]}</p>
-          {summary.sign.until && (
-            <p>{`until ${formatDateTime(summary.sign.until, tz, clock)}`}</p>
-          )}
-        </>
-      )
+      return {
+        glyph: <SignGlyph sign={summary.sign.current} silent />,
+        title: SIGN_NAMES[summary.sign.current],
+        detail: summary.sign.until && `until ${formatDateTime(summary.sign.until, tz, clock)}`,
+      }
     case 'void': {
       const active = summary.void.active
       const period = active ?? summary.void.next
-      return (
-        <>
-          <p class="card-title">{active ? 'Void now' : 'Later'}</p>
-          <p>
-            {period.lastAspect && <AspectGlyph angle={period.lastAspect.angle} />}
-            {active
-              ? `until ${formatDateTime(period.end, tz, clock)}`
-              : voidLine(period, tz, clock)}
-          </p>
-        </>
-      )
+      return {
+        glyph: period.lastAspect && <AspectGlyph angle={period.lastAspect.angle} />,
+        title: active ? 'Void now' : 'Next void',
+        detail: active ? `until ${formatDateTime(period.end, tz, clock)}` : voidLine(period, tz, clock),
+      }
     }
     case 'mansion':
-      return (
-        <>
-          <MansionBadge n={summary.mansion.current} />
-          <p class="card-title">{MANSION_NAMES[summary.mansion.current - 1]}</p>
-          {summary.mansion.until && (
-            <p>{`until ${formatDateTime(summary.mansion.until, tz, clock)}`}</p>
-          )}
-        </>
-      )
+      return {
+        glyph: <MansionBadge n={summary.mansion.current} />,
+        title: MANSION_NAMES[summary.mansion.current - 1],
+        detail: summary.mansion.until && `until ${formatDateTime(summary.mansion.until, tz, clock)}`,
+      }
     case 'mercury':
-      return (
-        <>
-          <PlanetGlyph planet="Mercury" />
-          <p class="card-title">{summary.mercury.state}</p>
-          {summary.mercury.until && (
-            <p>{`until ${formatDateTime(summary.mercury.until, tz, clock)}`}</p>
-          )}
-        </>
-      )
+      return {
+        glyph: <PlanetGlyph planet="Mercury" />,
+        title: MERCURY_LABELS[summary.mercury.state],
+        detail: summary.mercury.until && `until ${formatDateTime(summary.mercury.until, tz, clock)}`,
+      }
   }
 }
 
 function Card({
   feature,
+  live,
   at,
   pinned,
   tz,
@@ -145,6 +118,7 @@ function Card({
   onOpen,
 }: {
   feature: Feature
+  live: NowSummary | null
   at: Date
   pinned: boolean
   tz: string
@@ -152,40 +126,34 @@ function Card({
   onStep: (feature: Feature, dir: 1 | -1) => void
   onOpen: (contentId: string) => void
 }) {
-  const summary = useMemo(() => summaryAt(at), [at])
-  if (summary === null) {
-    return (
-      <article class="card" data-feature={feature}>
-        <h2>{HEADINGS[feature]}</h2>
-        <p>No data</p>
-      </article>
-    )
-  }
+  const own = useMemo(() => (pinned ? summaryAt(at) : null), [pinned, at])
+  const summary = pinned ? own : live
+  const content = summary && cardContent(summary, feature, tz, clock)
   return (
     <article class="card" data-feature={feature}>
-      <button
-        type="button"
-        class="card-open"
-        aria-label={`Open ${feature} details`}
-        onClick={() => onOpen(contentId(summary, feature))}
-      />
-      <div class="card-head">
+      {summary && (
+        <button
+          type="button"
+          class="card-open"
+          aria-label={`Open ${feature} details`}
+          onClick={() => onOpen(contentId(summary, feature))}
+        />
+      )}
+      <span class="card-glyph">{content?.glyph}</span>
+      <div class="card-text">
         <h2>{HEADINGS[feature]}</h2>
-        <div class="card-steps">
-          <button
-            type="button"
-            aria-label={`Previous ${feature}`}
-            onClick={() => onStep(feature, -1)}
-          >
-            ‹
-          </button>
-          <button type="button" aria-label={`Next ${feature}`} onClick={() => onStep(feature, 1)}>
-            ›
-          </button>
-        </div>
+        <p class="card-title">{content ? content.title : 'No data'}</p>
+        {content?.detail && <p class="card-detail">{content.detail}</p>}
+        {pinned && <p class="card-pinned">{`at ${formatDateTime(at, tz, clock)}`}</p>}
       </div>
-      <CardBody summary={summary} feature={feature} tz={tz} clock={clock} />
-      {pinned && <p class="card-pinned">{`at ${formatDateTime(at, tz, clock)}`}</p>}
+      <div class="card-steps">
+        <button type="button" aria-label={`Previous ${feature}`} onClick={() => onStep(feature, -1)}>
+          ‹
+        </button>
+        <button type="button" aria-label={`Next ${feature}`} onClick={() => onStep(feature, 1)}>
+          ›
+        </button>
+      </div>
     </article>
   )
 }
@@ -195,14 +163,10 @@ function Card({
 const STEP_INSIDE_MS = 1_000
 
 function steppedCursor(feature: Feature, from: Date, dir: 1 | -1): Date | null {
-  let boundary: Date
-  try {
-    boundary = stepEvent(feature, from, dir)
-  } catch {
-    return null
-  }
+  const boundary = stepEvent(feature, from, dir)
   const inside = feature === 'void' && dir === -1 ? -STEP_INSIDE_MS : STEP_INSIDE_MS
-  return new Date(boundary.getTime() + inside)
+  const next = new Date(boundary.getTime() + inside)
+  return isSupported(next) ? next : null
 }
 
 const liveNow = () => new Date()
@@ -210,7 +174,7 @@ const liveNow = () => new Date()
 export function Now({ now: nowFn = liveNow }: { now?: () => Date }) {
   const [settings] = useSettings()
   const tz = effectiveTimeZone(settings)
-  const clock = settings.clock
+  const clock = effectiveClock(settings)
   const [base, setBase] = useState(() => nowFn())
   const [cursors, setCursors] = useState<Cursors>(liveCursors)
   const [sheetId, setSheetId] = useState<string | null>(null)
@@ -234,6 +198,8 @@ export function Now({ now: nowFn = liveNow }: { now?: () => Date }) {
     })
   }
 
+  const live = useMemo(() => summaryAt(base), [base])
+
   const backToNow = () => {
     setBase(nowFn())
     setCursors(liveCursors())
@@ -252,6 +218,7 @@ export function Now({ now: nowFn = liveNow }: { now?: () => Date }) {
           <Card
             key={feature}
             feature={feature}
+            live={live}
             at={cursors[feature] ?? base}
             pinned={cursors[feature] !== null}
             tz={tz}

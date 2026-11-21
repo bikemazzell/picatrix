@@ -6,10 +6,11 @@ import type { DaySummary, Feature, Span } from '../calendar/types'
 import { addDays, dayBounds, toLocal, type LocalDate } from '../calendar/tz'
 import { MANSION_NAMES, SIGN_NAMES } from '../content/names'
 import { formatDateTime, formatTime, type Clock } from '../format'
-import { effectiveTimeZone, useSettings } from '../settings'
+import { isSupportedYear } from '../calendar/cache'
+import { effectiveClock, effectiveTimeZone, useSettings } from '../settings'
 import { AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 import { Sheet } from './Sheet'
-import { FEATURES, HEADINGS } from './features'
+import { FEATURES, HEADINGS, MERCURY_LABELS } from './features'
 
 const QUARTER_NAMES: Record<number, string> = {
   0: 'New Moon',
@@ -54,10 +55,6 @@ export function parseLocalDate(s: string): LocalDate | null {
 
 function ymd(date: LocalDate): string {
   return `${date.y}-${String(date.m).padStart(2, '0')}-${String(date.d).padStart(2, '0')}`
-}
-
-function inRange(date: LocalDate): boolean {
-  return date.y >= 1900 && date.y <= 2100
 }
 
 function boundary(t: Date, date: LocalDate, tz: string, clock: Clock): string {
@@ -156,7 +153,7 @@ function rowsFor(
       const rows: Row[] = [
         {
           id: `mercury/${mercury.state}`,
-          text: mercury.state,
+          text: MERCURY_LABELS[mercury.state],
           lead: <PlanetGlyph planet="Mercury" />,
           sub:
             mercury.until === null
@@ -213,7 +210,7 @@ function Section({
 export function Day({ date }: { date: string }) {
   const [settings] = useSettings()
   const tz = effectiveTimeZone(settings)
-  const clock = settings.clock
+  const clock = effectiveClock(settings)
   const [sheetId, setSheetId] = useState<string | null>(null)
   const parsed = parseLocalDate(date)
   const view = parsed ?? toLocal(new Date(), tz)
@@ -224,7 +221,7 @@ export function Day({ date }: { date: string }) {
   }, [parsed, viewKey])
 
   const summary = useMemo(() => {
-    if (!inRange(view)) return null
+    if (!isSupportedYear(view.y)) return null
     try {
       return daySummary(view, tz)
     } catch (error) {

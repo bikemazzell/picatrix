@@ -24,7 +24,7 @@ describe('loadSettings', () => {
   it('returns defaults when storage is empty', () => {
     const s = loadSettings()
     expect(s.timeZone).toBeNull()
-    expect(['12h', '24h']).toContain(s.clock)
+    expect(s.clock).toBe('auto')
     expect(s.textScale).toBe(1)
     expect(s.features).toEqual({ phase: true, sign: true, void: true, mansion: true, mercury: true })
     expect(s.theme).toBe('system')

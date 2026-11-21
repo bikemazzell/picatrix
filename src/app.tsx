@@ -52,7 +52,7 @@ export function App() {
   return (
     <>
       <Nav view={route.view} />
-      <main>
+      <main class={`view-${route.view}`}>
         <View route={route} />
       </main>
     </>

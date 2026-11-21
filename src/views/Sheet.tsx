@@ -17,19 +17,37 @@ function Blocks({ text }: { text: string }) {
       {text
         .split(/\n{2,}/)
         .map(block => block.split('\n'))
-        .map(lines =>
+        .map((lines, index) =>
           lines[0].startsWith('- ') ? (
-            <ul>
+            <ul key={index}>
               {lines.map((line, i) => (
                 <li key={i}>{line.replace(/^- /, '')}</li>
               ))}
             </ul>
           ) : (
-            <p key={lines.join(' ')}>{lines.join(' ')}</p>
+            <p key={index}>{lines.join(' ')}</p>
           ),
         )}
     </>
   )
+}
+
+const FOCUSABLE = 'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+
+function keepFocusInside(event: KeyboardEvent, sheet: HTMLElement | null): void {
+  if (sheet === null) return
+  const focusable = [...sheet.querySelectorAll<HTMLElement>(FOCUSABLE)]
+  if (focusable.length === 0) return
+  const first = focusable[0]
+  const last = focusable[focusable.length - 1]
+  const active = document.activeElement
+  const leaving = event.shiftKey
+    ? active === first || active === sheet || !sheet.contains(active)
+    : active === last || !sheet.contains(active)
+  if (!leaving) return
+  event.preventDefault()
+  const target = event.shiftKey ? last : first
+  target.focus()
 }
 
 export function Sheet({ contentId, onClose }: { contentId: string; onClose: () => void }) {
@@ -49,6 +67,7 @@ export function Sheet({ contentId, onClose }: { contentId: string; onClose: () =
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') onClose()
+      if (event.key === 'Tab') keepFocusInside(event, sheetRef.current)
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
