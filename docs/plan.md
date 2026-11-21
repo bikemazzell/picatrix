@@ -252,10 +252,10 @@ Each item has a test in the task that owns the code (Tasks 5, 6, 10).
 - Create: `src/views/Month.tsx`
 - Test: `tests/views/month.test.tsx`
 
-- [ ] **Step 1:** Write the test for `#/month/2026-11` in America/New_York: 42 cells. The cell for Nov 20 shows "2" and is marked as today with a fixed clock on that date. Nov 24 has a full Moon glyph. Nov 20 has an Aries glyph. Nov 1 to 12 have a Mercury mark. A click on Nov 22 goes to `#/day/2026-11-22`. Previous and next month controls change the route. The strip colors come from CSS variables `--fire`, `--earth`, `--air`, `--water`, `--void`.
-- [ ] **Step 2:** Run it. Expected: FAIL. Implement.
-- [ ] **Step 3:** Run it. Expected: PASS. Open the dev server at 400 px wide and at desktop width. Expected: the grid fits without sideways scrolling.
-- [ ] **Step 4:** Commit: `feat(ui): Month view`.
+- [x] **Step 1:** Write the test for `#/month/2026-11` in America/New_York: 42 cells. The cell for Nov 20 shows "2" and is marked as today with a fixed clock on that date. Nov 24 has a full Moon glyph. Nov 20 has an Aries glyph. Nov 1 to 12 have a Mercury mark. A click on Nov 22 goes to `#/day/2026-11-22`. Previous and next month controls change the route. The strip colors come from CSS variables `--fire`, `--earth`, `--air`, `--water`, `--void`.
+- [x] **Step 2:** Run it. Expected: FAIL. Implement.
+- [x] **Step 3:** Run it. Expected: PASS. Open the dev server at 400 px wide and at desktop width. Expected: the grid fits without sideways scrolling.
+- [x] **Step 4:** Commit: `feat(ui): Month view`.
 
 ### Task 12: Settings and About views
 
