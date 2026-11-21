@@ -1,8 +1,9 @@
 import { toLocal } from '../calendar/tz'
+import { effectiveTimeZone, loadSettings } from '../settings'
 import type { Route } from '../app'
 
 function todayYMD(): string {
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+  const tz = effectiveTimeZone(loadSettings())
   const t = toLocal(new Date(), tz)
   return `${t.y}-${String(t.m).padStart(2, '0')}-${String(t.d).padStart(2, '0')}`
 }
