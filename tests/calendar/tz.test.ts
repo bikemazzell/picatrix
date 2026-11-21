@@ -38,6 +38,21 @@ describe('dayBounds', () => {
     expect(end.toISOString()).toBe('2026-03-09T04:00:00.000Z')
     expect(end.getTime() - start.getTime()).toBe(23 * HOUR)
   })
+
+  test.each([
+    ['Europe/Paris', { y: 1900, m: 1, d: 15 }, '1900-01-14T23:50:39.000Z'],
+    ['Africa/Monrovia', { y: 1950, m: 1, d: 1 }, '1950-01-01T00:44:30.000Z'],
+    ['Asia/Kolkata', { y: 1901, m: 1, d: 1 }, '1900-12-31T18:38:50.000Z'],
+  ])('a historical offset with seconds in %s starts the day at local midnight', (tz, date, iso) => {
+    const { start, end } = dayBounds(date, tz)
+    expect(start.toISOString()).toBe(iso)
+    expect(end.getTime() - start.getTime()).toBe(24 * HOUR)
+  })
+
+  test('Apia skips 2011-12-30, so that day has no length', () => {
+    const { start, end } = dayBounds({ y: 2011, m: 12, d: 30 }, 'Pacific/Apia')
+    expect(end.getTime()).toBe(start.getTime())
+  })
 })
 
 describe('toLocal', () => {

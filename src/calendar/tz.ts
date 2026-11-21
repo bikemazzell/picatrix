@@ -80,10 +80,11 @@ function zoneOffsetMs(t: number, tz: string): number {
   if (!part) throw new Error(`no timeZoneName part for ${tz}`)
   const text = part.value
   if (text === 'GMT') return 0
-  const match = /^GMT([+-])(\d{1,2}):?(\d{2})?$/.exec(text)
+  const match = /^GMT([+-])(\d{1,2})(?::?(\d{2}))?(?::(\d{2}))?$/.exec(text)
   if (!match) throw new Error(`unrecognized offset: ${text}`)
   const sign = match[1] === '-' ? -1 : 1
-  return sign * (Number(match[2]) * 60 + Number(match[3] ?? 0)) * 60_000
+  const seconds = Number(match[2]) * 3600 + Number(match[3] ?? 0) * 60 + Number(match[4] ?? 0)
+  return sign * seconds * 1000
 }
 
 function naiveUtc(date: LocalDate, h: number, min: number): number {
