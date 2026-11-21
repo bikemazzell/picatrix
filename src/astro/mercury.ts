@@ -7,6 +7,7 @@ const HALF_STEP_DAYS = 0.25
 const STATION_STEP_HOURS = 12
 const SHADOW_STEP_HOURS = 6
 const SHADOW_WINDOW_DAYS = 30
+const MAX_SHADOW_WINDOW_DAYS = 240
 const PAD_DAYS = 120
 const STATE_HORIZON_DAYS = 400
 
@@ -37,8 +38,7 @@ function mercuryStations(start: Date, end: Date): Station[] {
 
 function preShadowStart(stationRetro: Date, stationDirect: Date): Date {
   const target = mercuryLongitude(stationDirect)
-  let days = SHADOW_WINDOW_DAYS
-  for (;;) {
+  for (let days = SHADOW_WINDOW_DAYS; days <= MAX_SHADOW_WINDOW_DAYS; days *= 2) {
     const hits = findAngleCrossings(
       mercuryLongitude,
       target,
@@ -47,14 +47,13 @@ function preShadowStart(stationRetro: Date, stationDirect: Date): Date {
       SHADOW_STEP_HOURS,
     )
     if (hits.length > 0) return hits[hits.length - 1]
-    days *= 2
   }
+  throw new Error(`no pre-shadow start before the station at ${String(stationRetro)}`)
 }
 
 function postShadowEnd(stationDirect: Date, stationRetro: Date): Date {
   const target = mercuryLongitude(stationRetro)
-  let days = SHADOW_WINDOW_DAYS
-  for (;;) {
+  for (let days = SHADOW_WINDOW_DAYS; days <= MAX_SHADOW_WINDOW_DAYS; days *= 2) {
     const hits = findAngleCrossings(
       mercuryLongitude,
       target,
@@ -63,8 +62,8 @@ function postShadowEnd(stationDirect: Date, stationRetro: Date): Date {
       SHADOW_STEP_HOURS,
     )
     if (hits.length > 0) return hits[0]
-    days *= 2
   }
+  throw new Error(`no post-shadow end after the station at ${String(stationDirect)}`)
 }
 
 export function mercuryCycles(start: Date, end: Date): MercuryCycle[] {

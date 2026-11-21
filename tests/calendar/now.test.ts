@@ -148,3 +148,13 @@ describe("stepEvent('mercury')", () => {
     expect(Math.abs(prev.getTime() - cycle.stationDirect.getTime())).toBeLessThanOrEqual(60 * SEC)
   })
 })
+
+describe('nowSummary range guard', () => {
+  test.each([
+    ['an invalid date', new Date(Number.NaN)],
+    ['a time before 1900', new Date(Date.UTC(1899, 11, 31))],
+    ['a time in 2101', new Date(Date.UTC(2101, 0, 1))],
+  ])('rejects %s with a RangeError', (_label, t) => {
+    expect(() => nowSummary(t)).toThrow(RangeError)
+  })
+})

@@ -15,6 +15,7 @@ export const VOID_PLANETS: readonly Planet[] = [
 
 const DAY_MS = 86_400_000
 const INGRESS_MARGIN_DAYS = 3
+const MAX_INGRESS_MARGIN_DAYS = 96
 
 export function voidPeriods(
   start: Date,
@@ -40,8 +41,7 @@ export function voidPeriods(
 }
 
 function bracketedIngresses(start: Date, end: Date): SignIngress[] {
-  let marginDays = INGRESS_MARGIN_DAYS
-  for (;;) {
+  for (let marginDays = INGRESS_MARGIN_DAYS; marginDays <= MAX_INGRESS_MARGIN_DAYS; marginDays *= 2) {
     const events = signIngresses(
       new Date(start.getTime() - marginDays * DAY_MS),
       new Date(end.getTime() + marginDays * DAY_MS),
@@ -49,6 +49,6 @@ function bracketedIngresses(start: Date, end: Date): SignIngress[] {
     const before = events.some(event => event.time <= start)
     const after = events.some(event => event.time >= end)
     if (before && after) return events
-    marginDays *= 2
   }
+  throw new Error(`no sign ingresses bracket ${String(start)} - ${String(end)}`)
 }

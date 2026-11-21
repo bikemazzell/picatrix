@@ -54,9 +54,13 @@ function card(t: Date, list: { time: Date; value: number }[], fallback: number) 
   return { current, since, until: list.find(event => event.time > t)?.time ?? null }
 }
 
+export function isSupported(t: Date): boolean {
+  return t.getTime() >= MIN_SUPPORTED_TIME && t.getTime() < MAX_SUPPORTED_TIME
+}
+
 export function nowSummary(t: Date): NowSummary {
-  if (t.getTime() < MIN_SUPPORTED_TIME || t.getTime() >= MAX_SUPPORTED_TIME) {
-    throw new RangeError(`time outside the supported range 1900-2100: ${t.toISOString()}`)
+  if (!isSupported(t)) {
+    throw new RangeError(`time outside the supported range 1900-2100: ${String(t)}`)
   }
   const signEvents = searchAround(t, 4, (start, end) =>
     signIngresses(start, end).map(event => ({ time: event.time, value: event.sign })),
