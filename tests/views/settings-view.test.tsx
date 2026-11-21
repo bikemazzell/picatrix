@@ -42,20 +42,27 @@ afterEach(() => {
   document.documentElement.removeAttribute('data-theme')
 })
 
-test('the time zone picker lists zones, filters by search, and offers the device choice', () => {
+test('the time zone picker caps the unfiltered list and filters by search', () => {
   seed()
-  render(<SettingsView />)
-  expect(screen.getByRole('button', { name: 'Asia/Kolkata' })).toBeTruthy()
-  expect(screen.getByRole('button', { name: 'America/New_York' })).toBeTruthy()
+  const { container } = render(<SettingsView />)
+  const hint = screen.getByText(/^Type to search all \d+ zones$/)
+  const total = Number(/^Type to search all (\d+) zones$/.exec(hint.textContent ?? '')?.[1])
+  expect(total).toBeGreaterThanOrEqual(400)
+  expect(container.querySelectorAll('.zone-list li')).toHaveLength(60)
   fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Kolkata' } })
+  expect(container.querySelectorAll('.zone-list li')).toHaveLength(1)
   expect(screen.getByRole('button', { name: 'Asia/Kolkata' })).toBeTruthy()
   expect(screen.queryByRole('button', { name: 'America/New_York' })).toBeNull()
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'New_York' } })
+  expect(screen.getByRole('button', { name: 'America/New_York' })).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Asia/Kolkata' })).toBeNull()
   expect(screen.getByRole('button', { name: 'Use device time zone' })).toBeTruthy()
 })
 
 test('choosing Asia/Kolkata saves it and the Day view then uses it', () => {
   seed()
   render(<SettingsView />)
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Kolkata' } })
   fireEvent.click(screen.getByRole('button', { name: 'Asia/Kolkata' }))
   expect(stored().timeZone).toBe('Asia/Kolkata')
   cleanup()
@@ -63,6 +70,19 @@ test('choosing Asia/Kolkata saves it and the Day view then uses it', () => {
   render(<App />)
   expect(screen.getByText('Pisces until 11:22 AM')).toBeTruthy()
   expect(screen.getByText('Aries after 11:22 AM')).toBeTruthy()
+})
+
+test('legacy zone ids surface as their canonical buttons', () => {
+  seed('Asia/Calcutta')
+  render(<SettingsView />)
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Kolkata' } })
+  expect(screen.getByRole('button', { name: 'Asia/Kolkata' }).getAttribute('aria-pressed')).toBe(
+    'true',
+  )
+  fireEvent.input(screen.getByLabelText('Search time zones'), { target: { value: 'Ho_Chi_Minh' } })
+  expect(screen.getByRole('button', { name: 'Asia/Ho_Chi_Minh' })).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: 'Asia/Ho_Chi_Minh' }))
+  expect(stored().timeZone).toBe('Asia/Ho_Chi_Minh')
 })
 
 test('Use device time zone nulls the stored zone', () => {

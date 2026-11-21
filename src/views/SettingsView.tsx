@@ -1,9 +1,25 @@
 import { useEffect, useMemo, useState } from 'preact/hooks'
-import { applyPresentation, useSettings, type Settings } from '../settings'
+import {
+  applyPresentation,
+  TEXT_SCALE_MAX,
+  TEXT_SCALE_MIN,
+  useSettings,
+  type Settings,
+} from '../settings'
 import { FEATURES, HEADINGS } from './features'
 
 const ZONE_ALIASES: Record<string, string> = {
+  'America/Godthab': 'America/Nuuk',
   'Asia/Calcutta': 'Asia/Kolkata',
+  'Asia/Rangoon': 'Asia/Yangon',
+  'Asia/Saigon': 'Asia/Ho_Chi_Minh',
+  'Pacific/Enderbury': 'Pacific/Kanton',
+}
+
+const ZONE_PREVIEW_COUNT = 60
+
+function canonicalZone(zone: string): string {
+  return ZONE_ALIASES[zone] ?? zone
 }
 
 function supportedZones(): string[] | null {
@@ -12,7 +28,7 @@ function supportedZones(): string[] | null {
   ).supportedValuesOf
   if (typeof supported !== 'function') return null
   try {
-    const zones = [...new Set(supported.call(Intl, 'timeZone').map(z => ZONE_ALIASES[z] ?? z))].sort()
+    const zones = [...new Set(supported.call(Intl, 'timeZone').map(canonicalZone))].sort()
     return zones.length > 0 ? zones : null
   } catch {
     return null
@@ -29,21 +45,25 @@ export function SettingsView() {
     applyPresentation(settings)
   }, [settings])
 
-  const zones = useMemo(() => {
+  const zoneState = useMemo(() => {
     if (ALL_ZONES === null) return null
     const q = query.trim().toLowerCase()
-    if (q === '') return ALL_ZONES
-    return ALL_ZONES.filter(zone => zone.toLowerCase().includes(q))
+    const shown =
+      q === ''
+        ? ALL_ZONES.slice(0, ZONE_PREVIEW_COUNT)
+        : ALL_ZONES.filter(zone => zone.toLowerCase().includes(q))
+    return { shown, total: ALL_ZONES.length, searching: q !== '' }
   }, [query])
 
-  const setTimeZone = (timeZone: string | null) => update({ ...settings, timeZone })
+  const setTimeZone = (timeZone: string | null) =>
+    update({ ...settings, timeZone: timeZone === null ? null : canonicalZone(timeZone) })
 
   return (
     <div class="settings-view">
       <h1>Settings</h1>
       <section class="panel">
         <h2>Time zone</h2>
-        {zones === null ? (
+        {zoneState === null ? (
           <label class="field">
             Time zone
             <input
@@ -65,6 +85,9 @@ export function SettingsView() {
                 onInput={e => setQuery((e.currentTarget as HTMLInputElement).value)}
               />
             </label>
+            {!zoneState.searching && (
+              <p class="zone-hint">Type to search all {zoneState.total} zones</p>
+            )}
             <button
               type="button"
               class="zone-pick"
@@ -74,12 +97,14 @@ export function SettingsView() {
               Use device time zone
             </button>
             <ul class="zone-list">
-              {zones.map(zone => (
+              {zoneState.shown.map(zone => (
                 <li key={zone}>
                   <button
                     type="button"
                     class="zone-pick"
-                    aria-pressed={zone === settings.timeZone}
+                    aria-pressed={
+                      settings.timeZone !== null && canonicalZone(settings.timeZone) === zone
+                    }
                     onClick={() => setTimeZone(zone)}
                   >
                     {zone}
@@ -115,8 +140,8 @@ export function SettingsView() {
             Text size
             <input
               type="range"
-              min="0.8"
-              max="1.5"
+              min={TEXT_SCALE_MIN}
+              max={TEXT_SCALE_MAX}
               step="0.05"
               value={settings.textScale}
               onInput={e =>

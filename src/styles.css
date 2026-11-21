@@ -548,6 +548,12 @@ main {
   overflow-y: auto;
 }
 
+.zone-hint {
+  margin: 0.25rem 0 0;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
 .feature-list label {
   display: inline-flex;
   align-items: center;

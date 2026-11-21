@@ -12,8 +12,8 @@ export interface Settings {
 
 const STORAGE_KEY = 'picatrix.settings'
 const FEATURES: readonly Feature[] = ['phase', 'sign', 'void', 'mansion', 'mercury']
-const TEXT_SCALE_MIN = 0.8
-const TEXT_SCALE_MAX = 1.5
+export const TEXT_SCALE_MIN = 0.8
+export const TEXT_SCALE_MAX = 1.5
 
 function defaultClock(): '12h' | '24h' {
   const { hourCycle, hour12 } = new Intl.DateTimeFormat(undefined, {
