@@ -36,12 +36,14 @@ test('shows every card at the fixed clock', () => {
   render(<Now now={AT} />)
   expect(screen.getByText('Waxing')).toBeTruthy()
   expect(screen.getByText('Aries')).toBeTruthy()
-  expect(screen.getByText('until 2026-11-22, 5:09 AM')).toBeTruthy()
+  expect(screen.getByText('until Sun, Nov 22, 5:09 AM')).toBeTruthy()
   expect(screen.getByText('Next void')).toBeTruthy()
-  expect(screen.getByText('from 2:38 AM to 5:09 AM')).toBeTruthy()
+  expect(screen.getByText('Sun, Nov 22, 2:38 AM – 5:09 AM')).toBeTruthy()
   expect(screen.getByText('Al-Sharatain')).toBeTruthy()
-  expect(screen.getByText('until 2026-11-20, 11:46 PM')).toBeTruthy()
+  expect(screen.getByText('until Fri, Nov 20, 11:46 PM')).toBeTruthy()
   expect(screen.getByText('Post-shadow')).toBeTruthy()
+  expect(screen.getByText('Full Moon: Tue, Nov 24, 9:53 AM')).toBeTruthy()
+  expect(screen.queryByRole('button', { name: 'Back to now' })).toBeNull()
 })
 
 test('the sign card next control moves that card to Taurus and Now resets it', () => {
@@ -50,8 +52,8 @@ test('the sign card next control moves that card to Taurus and Now resets it', (
   fireEvent.click(screen.getByRole('button', { name: 'Next sign' }))
   expect(screen.getByText('Taurus')).toBeTruthy()
   expect(screen.queryByText('Aries')).toBeNull()
-  expect(screen.getByText('at 2026-11-22, 5:09 AM')).toBeTruthy()
-  fireEvent.click(screen.getByRole('button', { name: 'Now' }))
+  expect(screen.getByText('at Sun, Nov 22, 5:09 AM')).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: 'Back to now' }))
   expect(screen.getByText('Aries')).toBeTruthy()
   expect(screen.queryByText('Taurus')).toBeNull()
   expect(screen.queryByText(/^at /)).toBeNull()
@@ -63,7 +65,7 @@ test('the sign card previous control moves that card to Pisces', () => {
   fireEvent.click(screen.getByRole('button', { name: 'Previous sign' }))
   expect(screen.getByText('Pisces')).toBeTruthy()
   expect(screen.queryByText('Aries')).toBeNull()
-  expect(screen.getByText('at 2026-11-17, 4:19 PM')).toBeTruthy()
+  expect(screen.getByText('at Tue, Nov 17, 4:19 PM')).toBeTruthy()
 })
 
 test('a card body opens the sheet through the overlay button', () => {
@@ -99,7 +101,7 @@ test('the refresh interval survives unrelated state updates with the default clo
   render(<Now />)
   const created = spy.mock.calls.length
   fireEvent.click(screen.getByRole('button', { name: 'Next sign' }))
-  fireEvent.click(screen.getByRole('button', { name: 'Now' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Back to now' }))
   expect(spy.mock.calls.length).toBe(created)
 })
 
@@ -107,8 +109,8 @@ test('becoming visible again refreshes the base time', () => {
   seed()
   let t = new Date('2026-11-20T15:28:00Z')
   render(<Now now={() => t} />)
-  expect(screen.getByText('2026-11-20, 10:28 AM')).toBeTruthy()
+  expect(screen.getByText('Fri, Nov 20, 10:28 AM')).toBeTruthy()
   t = new Date('2026-11-20T16:34:00Z')
   fireEvent(document, new Event('visibilitychange'))
-  expect(screen.getByText('2026-11-20, 11:34 AM')).toBeTruthy()
+  expect(screen.getByText('Fri, Nov 20, 11:34 AM')).toBeTruthy()
 })

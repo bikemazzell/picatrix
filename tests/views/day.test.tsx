@@ -2,8 +2,9 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/pr
 import { afterEach, expect, test } from 'vitest'
 import { App } from '../../src/app'
 import { toLocal } from '../../src/calendar/tz'
+import { formatDate } from '../../src/format'
 import type { Feature } from '../../src/calendar/types'
-import { Day } from '../../src/views/Day'
+import { Day, parseLocalDate } from '../../src/views/Day'
 
 const TZ = 'America/New_York'
 
@@ -54,7 +55,7 @@ test('renders the pinned sections for the 2026-11-20 route', () => {
   expect(screen.getByText('Al-Sharatain, 12:52 AM – 11:46 PM')).toBeTruthy()
   expect(screen.getByText('Al-Butain after 11:46 PM')).toBeTruthy()
   expect(screen.getByText('Post-shadow')).toBeTruthy()
-  expect(screen.getByText('until 2026-11-30, 1:16 AM')).toBeTruthy()
+  expect(screen.getByText('until Mon, Nov 30, 1:16 AM')).toBeTruthy()
 })
 
 test('renders the November 22 void window when rendered directly', () => {
@@ -132,7 +133,7 @@ test('a quiet Mercury day points at the next cycle', () => {
   seed()
   render(<Day date="2026-12-05" />)
   expect(screen.getByText('Direct')).toBeTruthy()
-  expect(screen.getByText('next cycle from 2027-01-25, 1:58 PM')).toBeTruthy()
+  expect(screen.getByText('next cycle from Mon, Jan 25, 2027, 1:58 PM')).toBeTruthy()
 })
 
 test('a date after 2100-12-31 shows a message instead of data', () => {
@@ -159,6 +160,6 @@ test('an invalid route date redirects to today in the effective time zone', asyn
   openDay('2026-13-45')
   const today = todayYMD()
   await waitFor(() => expect(location.hash).toBe(`#/day/${today}`))
-  expect(await screen.findByText(today)).toBeTruthy()
+  expect(await screen.findByText(formatDate(parseLocalDate(today)!))).toBeTruthy()
   expect(screen.queryByText(/No data for this date/)).toBeNull()
 })

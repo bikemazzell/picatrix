@@ -3,8 +3,9 @@ import { isSupportedYear } from '../calendar/cache'
 import { monthGrid } from '../calendar/month'
 import type { MonthCell } from '../calendar/types'
 import { toLocal } from '../calendar/tz'
+import { formatMonth } from '../format'
 import { effectiveTimeZone, useSettings } from '../settings'
-import { MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
+import { Chevron, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 
 const RANGE_MESSAGE =
   'No data for this month. The ephemeris covers 1900-01-01 through 2100-12-31.'
@@ -137,14 +138,16 @@ export function Month({ month, now: nowFn = liveNow }: { month: string; now?: ()
 
   return (
     <div class="month-view">
-      <header class="month-bar">
-        <button type="button" aria-label="Previous month" onClick={() => go(-1)}>
-          ‹
-        </button>
-        <h1 class="month-title">{viewKey}</h1>
-        <button type="button" class="month-next" aria-label="Next month" onClick={() => go(1)}>
-          ›
-        </button>
+      <header class="view-bar">
+        <h1>{formatMonth(view.y, view.m)}</h1>
+        <div class="bar-actions">
+          <button type="button" class="round" aria-label="Previous month" onClick={() => go(-1)}>
+            <Chevron dir={-1} />
+          </button>
+          <button type="button" class="round" aria-label="Next month" onClick={() => go(1)}>
+            <Chevron dir={1} />
+          </button>
+        </div>
       </header>
       {cells === null ? (
         <p class="month-empty">{RANGE_MESSAGE}</p>

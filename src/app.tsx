@@ -50,11 +50,11 @@ export function App() {
     return () => window.removeEventListener('hashchange', onHashChange)
   }, [])
   return (
-    <>
+    <div class={`shell view-${route.view}`}>
       <Nav view={route.view} />
-      <main class={`view-${route.view}`}>
+      <main>
         <View route={route} />
       </main>
-    </>
+    </div>
   )
 }

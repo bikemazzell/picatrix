@@ -19,16 +19,21 @@ export function Nav({ view }: { view: Route['view'] }) {
   ]
   return (
     <nav class="nav">
-      {links.map(link => (
-        <a
-          key={link.view}
-          href={link.href}
-          class={view === link.view ? 'active' : undefined}
-          aria-current={view === link.view ? 'page' : undefined}
-        >
-          {link.label}
-        </a>
-      ))}
+      <div class="nav-inner">
+        <span class="brand">Picatrix</span>
+        <div class="nav-links">
+          {links.map(link => (
+            <a
+              key={link.view}
+              href={link.href}
+              class={view === link.view ? 'active' : undefined}
+              aria-current={view === link.view ? 'page' : undefined}
+            >
+              {link.label}
+            </a>
+          ))}
+        </div>
+      </div>
     </nav>
   )
 }

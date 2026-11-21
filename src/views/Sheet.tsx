@@ -85,7 +85,7 @@ export function Sheet({ contentId, onClose }: { contentId: string; onClose: () =
       >
         <header class="sheet-header">
           <h2>{entry.title}</h2>
-          <button type="button" onClick={onClose}>
+          <button type="button" class="pill" onClick={onClose}>
             Close
           </button>
         </header>

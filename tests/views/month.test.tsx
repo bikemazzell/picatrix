@@ -2,6 +2,7 @@ import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-li
 import { afterEach, expect, test } from 'vitest'
 import { App } from '../../src/app'
 import { toLocal } from '../../src/calendar/tz'
+import { formatMonth } from '../../src/format'
 import type { Feature } from '../../src/calendar/types'
 import { Month } from '../../src/views/Month'
 
@@ -139,7 +140,7 @@ test('previous and next month controls change the route', async () => {
   openMonth('2026-11')
   fireEvent.click(screen.getByRole('button', { name: 'Next month' }))
   await waitFor(() => expect(location.hash).toBe('#/month/2026-12'))
-  expect(await screen.findByText('2026-12')).toBeTruthy()
+  expect(await screen.findByText('December 2026')).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: 'Previous month' }))
   await waitFor(() => expect(location.hash).toBe('#/month/2026-11'))
 })
@@ -156,13 +157,15 @@ test('an invalid route month redirects to the current month in the effective tim
   openMonth('2026-13')
   const now = todayYM()
   await waitFor(() => expect(location.hash).toBe(`#/month/${now}`))
-  expect(await screen.findByText(now)).toBeTruthy()
+  const [y, m] = now.split('-').map(Number)
+  expect(await screen.findByText(formatMonth(y, m))).toBeTruthy()
 })
 
 test('a garbage month string rendered directly falls back to the current month', () => {
   seed()
   render(<Month month="20x6-???" />)
-  expect(screen.getByText(todayYM())).toBeTruthy()
+  const [y, m] = todayYM().split('-').map(Number)
+  expect(screen.getByText(formatMonth(y, m))).toBeTruthy()
 })
 
 test('a month after 2100-12 shows a message instead of cells', () => {

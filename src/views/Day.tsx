@@ -5,10 +5,10 @@ import { daySummary } from '../calendar/day'
 import type { DaySummary, Feature, Span } from '../calendar/types'
 import { addDays, dayBounds, toLocal, type LocalDate } from '../calendar/tz'
 import { MANSION_NAMES, SIGN_NAMES } from '../content/names'
-import { formatDateTime, formatTime, type Clock } from '../format'
+import { formatDate, formatDateTime, formatTime, type Clock } from '../format'
 import { isSupportedYear } from '../calendar/cache'
 import { effectiveClock, effectiveTimeZone, useSettings } from '../settings'
-import { AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
+import { CalendarIcon, Chevron, AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 import { Sheet } from './Sheet'
 import { FEATURES, HEADINGS, MERCURY_LABELS } from './features'
 
@@ -62,7 +62,7 @@ function boundary(t: Date, date: LocalDate, tz: string, clock: Clock): string {
   if (local.y === date.y && local.m === date.m && local.d === date.d) {
     return formatTime(t, tz, clock)
   }
-  return formatDateTime(t, tz, clock)
+  return formatDateTime(t, tz, clock, date.y)
 }
 
 interface Row {
@@ -240,22 +240,28 @@ export function Day({ date }: { date: string }) {
 
   return (
     <div class="day-view">
-      <header class="day-bar">
-        <button type="button" aria-label="Previous day" onClick={() => go(-1)}>
-          ‹
-        </button>
-        <h1 class="day-date">{viewKey}</h1>
-        <input
-          type="date"
-          aria-label="Go to date"
-          value={viewKey}
-          min="1900-01-01"
-          max="2100-12-31"
-          onChange={onPick}
-        />
-        <button type="button" aria-label="Next day" onClick={() => go(1)}>
-          ›
-        </button>
+      <header class="view-bar">
+        <h1>{formatDate(view)}</h1>
+        <div class="bar-actions">
+          <button type="button" class="round" aria-label="Previous day" onClick={() => go(-1)}>
+            <Chevron dir={-1} />
+          </button>
+          <label class="round date-pick" title="Go to date">
+            <CalendarIcon />
+            <input
+              type="date"
+              aria-label="Go to date"
+              value={viewKey}
+              min="1900-01-01"
+              max="2100-12-31"
+              onClick={event => event.currentTarget.showPicker?.()}
+              onChange={onPick}
+            />
+          </label>
+          <button type="button" class="round" aria-label="Next day" onClick={() => go(1)}>
+            <Chevron dir={1} />
+          </button>
+        </div>
       </header>
       {summary === null ? (
         <p class="day-empty">{RANGE_MESSAGE}</p>
