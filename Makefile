@@ -1,4 +1,4 @@
-.PHONY: dev build preview test typecheck lint quality
+.PHONY: dev build preview test typecheck lint precache quality
 
 dev:
 	npm run dev
@@ -18,4 +18,7 @@ typecheck:
 lint:
 	npx eslint .
 
-quality: typecheck lint test build
+precache: build
+	npx tsx tools/check-precache.ts
+
+quality: typecheck lint test build precache
