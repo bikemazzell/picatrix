@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks'
 import { Day } from './views/Day'
+import { Month } from './views/Month'
 import { Nav } from './views/Nav'
 import { Now } from './views/Now'
 
@@ -29,7 +30,7 @@ function Placeholder({ route }: { route: Route }) {
     case 'day':
       return <Day date={route.date} />
     case 'month':
-      return <h1>Month {route.month}</h1>
+      return <Month month={route.month} />
     case 'settings':
       return <h1>Settings</h1>
     case 'about':

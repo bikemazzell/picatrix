@@ -1,0 +1,171 @@
+import { cleanup, fireEvent, render, screen, waitFor, within } from '@testing-library/preact'
+import { afterEach, expect, test } from 'vitest'
+import { App } from '../../src/app'
+import { toLocal } from '../../src/calendar/tz'
+import type { Feature } from '../../src/calendar/types'
+import { Month } from '../../src/views/Month'
+
+const TZ = 'America/New_York'
+const AT = () => new Date('2026-11-20T15:28:00Z')
+
+function seed(overrides?: { features?: Partial<Record<Feature, boolean>> }) {
+  window.localStorage.setItem(
+    'picatrix.settings',
+    JSON.stringify({
+      timeZone: TZ,
+      clock: '12h',
+      textScale: 1,
+      features: {
+        phase: true,
+        sign: true,
+        void: true,
+        mansion: true,
+        mercury: true,
+        ...overrides?.features,
+      },
+      theme: 'system',
+    }),
+  )
+}
+
+function todayYM(): string {
+  const t = toLocal(new Date(), TZ)
+  return `${t.y}-${String(t.m).padStart(2, '0')}`
+}
+
+function openMonth(month: string) {
+  location.hash = `#/month/${month}`
+  return render(<App />)
+}
+
+function cell(container: Element, iso: string): HTMLElement {
+  const button = container.querySelector(`button.month-cell[aria-label="${iso}"]`)
+  expect(button).not.toBeNull()
+  return button as HTMLElement
+}
+
+afterEach(() => {
+  cleanup()
+  window.localStorage.clear()
+  location.hash = ''
+})
+
+test('renders 42 cells with the pinned Nov 2026 marks at the fixed clock', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  expect(container.querySelectorAll('.month-cell')).toHaveLength(42)
+  expect(container.querySelectorAll('.month-cell.today')).toHaveLength(1)
+  const nov20 = cell(container, '2026-11-20')
+  expect(within(nov20).getByText('2')).toBeTruthy()
+  expect(nov20.classList.contains('today')).toBe(true)
+  expect(cell(container, '2026-11-21').classList.contains('today')).toBe(false)
+})
+
+test('shows the full Moon glyph on Nov 24 and the new Moon glyph on Nov 9', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  expect(
+    within(cell(container, '2026-11-24')).getByLabelText('Waxing moon, 100% illuminated'),
+  ).toBeTruthy()
+  expect(
+    within(cell(container, '2026-11-09')).getByLabelText('Waxing moon, 0% illuminated'),
+  ).toBeTruthy()
+})
+
+test('shows the Aries glyph on Nov 20 and the Mercury mark on Nov 1 through 12', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  expect(within(cell(container, '2026-11-20')).getByLabelText('Aries')).toBeTruthy()
+  for (let d = 1; d <= 12; d++) {
+    const iso = `2026-11-${String(d).padStart(2, '0')}`
+    expect(within(cell(container, iso)).queryByLabelText('Mercury')).toBeTruthy()
+  }
+  expect(within(cell(container, '2026-11-14')).queryByLabelText('Mercury')).toBeNull()
+})
+
+test('strip segments use the element and void CSS variables and fraction widths', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  const seen = new Set<string>()
+  for (const seg of container.querySelectorAll('.month-seg')) {
+    const background = (seg as HTMLElement).style.background
+    for (const name of ['fire', 'earth', 'air', 'water', 'void']) {
+      if (background.includes(`var(--${name})`)) seen.add(name)
+    }
+  }
+  expect([...seen].sort()).toEqual(['air', 'earth', 'fire', 'void', 'water'])
+  const nov20 = cell(container, '2026-11-20')
+  const segments = [...nov20.querySelectorAll('.month-seg')] as HTMLElement[]
+  expect(segments).toHaveLength(2)
+  const fire = segments.find(seg => seg.style.background.includes('var(--fire)'))
+  const voidSeg = segments.find(seg => seg.style.background.includes('var(--void)'))
+  expect(fire).toBeDefined()
+  expect(voidSeg).toBeDefined()
+  expect(Math.abs(parseFloat(fire!.style.width) - 96.37)).toBeLessThan(0.3)
+  expect(Math.abs(parseFloat(voidSeg!.style.width) - 3.63)).toBeLessThan(0.3)
+})
+
+test('clicking a cell routes to the day view', async () => {
+  seed()
+  const { container } = openMonth('2026-11')
+  fireEvent.click(cell(container, '2026-11-22'))
+  await waitFor(() => expect(location.hash).toBe('#/day/2026-11-22'))
+})
+
+test('previous and next month controls change the route', async () => {
+  seed()
+  openMonth('2026-11')
+  fireEvent.click(screen.getByRole('button', { name: 'Next month' }))
+  await waitFor(() => expect(location.hash).toBe('#/month/2026-12'))
+  expect(await screen.findByText('2026-12')).toBeTruthy()
+  fireEvent.click(screen.getByRole('button', { name: 'Previous month' }))
+  await waitFor(() => expect(location.hash).toBe('#/month/2026-11'))
+})
+
+test('previous month crosses the year boundary', async () => {
+  seed()
+  openMonth('2026-01')
+  fireEvent.click(screen.getByRole('button', { name: 'Previous month' }))
+  await waitFor(() => expect(location.hash).toBe('#/month/2025-12'))
+})
+
+test('an invalid route month redirects to the current month in the effective time zone', async () => {
+  seed()
+  openMonth('2026-13')
+  const now = todayYM()
+  await waitFor(() => expect(location.hash).toBe(`#/month/${now}`))
+  expect(await screen.findByText(now)).toBeTruthy()
+})
+
+test('a garbage month string rendered directly falls back to the current month', () => {
+  seed()
+  render(<Month month="20x6-???" />)
+  expect(screen.getByText(todayYM())).toBeTruthy()
+})
+
+test('a month after 2100-12 shows a message instead of cells', () => {
+  seed()
+  const { container } = openMonth('2101-01')
+  expect(
+    screen.getByText('No data for this month. The ephemeris covers 1900-01-01 through 2100-12-31.'),
+  ).toBeTruthy()
+  expect(container.querySelectorAll('.month-cell')).toHaveLength(0)
+})
+
+test('a month before 1900-01 shows a message instead of cells', () => {
+  seed()
+  const { container } = render(<Month month="1899-12" />)
+  expect(
+    screen.getByText('No data for this month. The ephemeris covers 1900-01-01 through 2100-12-31.'),
+  ).toBeTruthy()
+  expect(container.querySelectorAll('.month-cell')).toHaveLength(0)
+})
+
+test('glyph marks respect the feature switches while the mansion number stays', () => {
+  seed({ features: { phase: false, sign: false, mercury: false } })
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  expect(within(cell(container, '2026-11-24')).queryByLabelText('Waxing moon, 100% illuminated')).toBeNull()
+  expect(within(cell(container, '2026-11-20')).queryByLabelText('Aries')).toBeNull()
+  expect(within(cell(container, '2026-11-05')).queryByLabelText('Mercury')).toBeNull()
+  expect(within(cell(container, '2026-11-20')).getByText('2')).toBeTruthy()
+})
