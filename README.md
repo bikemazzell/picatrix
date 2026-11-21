@@ -2,7 +2,7 @@
 
 An offline lunar almanac. For any date it shows the Moon's phase, zodiacal sign, void-of-course periods, the 28 lunar mansions, and Mercury retrograde stations, each with lore adapted from the Picatrix, the 11th-century Arabic astrological treatise.
 
-The app is a progressive web app: install it from the browser, and after the first load it works fully offline. All computation happens in the browser with [astronomy-engine](https://github.com/cosmosos/astronomy-engine); no network requests leave the page after the first visit.
+The app is a progressive web app: install it from the browser, and after the first load it works fully offline. All computation happens in the browser with [astronomy-engine](https://github.com/cosinekitty/astronomy); no network requests leave the page after the first visit.
 
 ## Run
 
