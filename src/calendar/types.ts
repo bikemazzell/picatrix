@@ -48,7 +48,8 @@ export interface NowSummary {
 export interface MonthCell {
   date: LocalDate
   inMonth: boolean
-  mansion: number
+  inRange: boolean
+  mansions: number[]
   phaseEvent: PhaseEvent | null
   ingress: SignIngress | null
   mercuryRetro: boolean

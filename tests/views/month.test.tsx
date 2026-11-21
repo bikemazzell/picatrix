@@ -117,12 +117,12 @@ test('cell labels name the date, mansion, and void of course', () => {
   )
   expect(labels).toHaveLength(42)
   expect(cell(container, '2026-11-20').getAttribute('aria-label')).toBe(
-    'November 20, mansion 2, void of course',
+    'November 20, mansions 1 and 2, void of course',
   )
   expect(labels.some(label => !label.endsWith('void of course'))).toBe(true)
   for (const label of labels) {
     expect(label).toMatch(
-      /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, mansion \d{1,2}(, void of course)?$/,
+      /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, (mansion \d{1,2}|mansions (\d{1,2}, )*\d{1,2} and \d{1,2})(, void of course)?$/,
     )
   }
 })
@@ -190,4 +190,21 @@ test('glyph marks respect the feature switches while the mansion number stays', 
   expect(within(cell(container, '2026-11-20')).queryByLabelText('Aries')).toBeNull()
   expect(within(cell(container, '2026-11-05')).queryByLabelText('Mercury')).toBeNull()
   expect(within(cell(container, '2026-11-20')).getByText('2')).toBeTruthy()
+})
+
+test('a day with two mansion ingresses shows both badges', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  const badges = [...cell(container, '2026-11-20').querySelectorAll('.mansion-badge')]
+  expect(badges.map(badge => badge.textContent)).toEqual(['1', '2'])
+})
+
+test('cells past 2100 are disabled and carry no data', () => {
+  seed()
+  const { container } = render(<Month month="2100-12" now={AT} />)
+  const past = cell(container, '2101-01-01')
+  expect(past.hasAttribute('disabled')).toBe(true)
+  expect(past.getAttribute('aria-label')).toBe('January 1, no data')
+  expect(past.querySelector('.mansion-badge')).toBeNull()
+  expect(cell(container, '2100-12-31').hasAttribute('disabled')).toBe(false)
 })

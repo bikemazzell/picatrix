@@ -103,7 +103,7 @@ export function daySummary(date: LocalDate, tz: string): DaySummary {
         boundaries.find(boundary => boundary.to === 'approaching' && boundary.time > start)?.time ??
         end,
       transitions: boundaries
-        .filter(boundary => boundary.time >= start && boundary.time < end)
+        .filter(boundary => boundary.time > start && boundary.time < end)
         .map(boundary => ({ time: boundary.time, to: boundary.to })),
     },
   }

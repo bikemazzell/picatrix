@@ -1,9 +1,8 @@
-import { eventsFor, type EventBundle } from './cache'
+import { eventsFor, isSupportedYear, type EventBundle } from './cache'
 import { mansionAt, signAt } from './day'
 import { addDays, dayBounds, type LocalDate } from './tz'
 import { elementOf, type MonthCell } from './types'
 
-const MINUTE_MS = 60_000
 const MERGE_FRACTION = 0.005
 
 export function monthGrid(y: number, m: number, tz: string): MonthCell[] {
@@ -29,10 +28,26 @@ function cellFor(
   bundle: EventBundle,
 ): MonthCell {
   const { start, end } = dayBounds(date, tz)
+  if (!isSupportedYear(date.y)) {
+    return {
+      date,
+      inMonth,
+      inRange: false,
+      mansions: [],
+      phaseEvent: null,
+      ingress: null,
+      mercuryRetro: false,
+      strip: [],
+    }
+  }
+  const entered = bundle.mansions
+    .filter(event => event.time > start && event.time < end)
+    .map(event => event.mansion)
   return {
     date,
     inMonth,
-    mansion: mansionAt(new Date(end.getTime() - MINUTE_MS)),
+    inRange: true,
+    mansions: entered.length > 0 ? entered : [mansionAt(start)],
     phaseEvent: bundle.phases.find(event => event.time >= start && event.time < end) ?? null,
     ingress: bundle.signs.find(event => event.time > start && event.time < end) ?? null,
     mercuryRetro: bundle.mercury.some(

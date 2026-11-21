@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from 'preact/hooks'
+import { isSupportedYear } from '../calendar/cache'
 import { monthGrid } from '../calendar/month'
 import type { MonthCell } from '../calendar/types'
 import { toLocal } from '../calendar/tz'
@@ -43,7 +44,13 @@ function shiftMonth(y: number, m: number, n: number): { y: number; m: number } {
 const liveNow = () => new Date()
 
 function cellLabel(cell: MonthCell): string {
-  const label = `${MONTHS[cell.date.m - 1]} ${cell.date.d}, mansion ${cell.mansion}`
+  const day = `${MONTHS[cell.date.m - 1]} ${cell.date.d}`
+  if (!cell.inRange) return `${day}, no data`
+  const mansions =
+    cell.mansions.length === 1
+      ? `mansion ${cell.mansions[0]}`
+      : `mansions ${cell.mansions.slice(0, -1).join(', ')} and ${cell.mansions[cell.mansions.length - 1]}`
+  const label = `${day}, ${mansions}`
   return cell.strip.some(segment => segment.void) ? `${label}, void of course` : label
 }
 
@@ -59,19 +66,25 @@ function Cell({
   const classes = ['month-cell']
   if (!cell.inMonth) classes.push('out')
   if (today) classes.push('today')
+  if (!cell.inRange) classes.push('empty')
   const moon = cell.phaseEvent ? QUARTER_MOON[cell.phaseEvent.quarter] : null
   return (
     <button
       type="button"
       class={classes.join(' ')}
       aria-label={cellLabel(cell)}
+      disabled={!cell.inRange}
       onClick={() => {
         location.hash = `#/day/${dayKey(cell.date)}`
       }}
     >
       <span class="cell-head">
         <span class="cell-day">{cell.date.d}</span>
-        <MansionBadge n={cell.mansion} silent />
+        <span class="cell-mansions">
+          {cell.mansions.map(n => (
+            <MansionBadge key={n} n={n} silent />
+          ))}
+        </span>
       </span>
       <span class="cell-marks">
         {marks.phase && moon !== null && <MoonGlyph fraction={moon.fraction} waxing={moon.waxing} />}
@@ -106,7 +119,7 @@ export function Month({ month, now: nowFn = liveNow }: { month: string; now?: ()
   }, [parsed, viewKey])
 
   const cells = useMemo(() => {
-    if (view.y < 1900 || view.y > 2100) return null
+    if (!isSupportedYear(view.y)) return null
     return monthGrid(view.y, view.m, tz)
   }, [viewKey, tz])
 

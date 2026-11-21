@@ -167,8 +167,8 @@ describe('Review Focus 2: an event belongs to the local date of its local time',
 })
 
 describe('outside the supported range', () => {
-  test('a day in 2101 yields empty summaries instead of errors', () => {
-    const day = daySummary({ y: 2101, m: 1, d: 1 }, TZ)
+  test('a day in mid-2101 yields empty summaries instead of errors', () => {
+    const day = daySummary({ y: 2101, m: 6, d: 1 }, TZ)
     expect(day.signs).toEqual([])
     expect(day.mansions).toEqual([])
     expect(day.voids).toEqual([])

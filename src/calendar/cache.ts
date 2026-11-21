@@ -17,6 +17,12 @@ const MERCURY_SEARCH_DAYS = 60
 
 export const MIN_SUPPORTED_TIME = Date.UTC(1900, 0, 1)
 export const MAX_SUPPORTED_TIME = Date.UTC(2101, 0, 1)
+export function isSupportedYear(y: number): boolean {
+  return y >= 1900 && y <= 2100
+}
+
+const MIN_COMPUTED_TIME = Date.UTC(1899, 11, 1)
+const MAX_COMPUTED_TIME = Date.UTC(2101, 1, 1)
 
 export interface EventBundle {
   covered: { start: Date; end: Date }
@@ -47,7 +53,7 @@ function bundleForMonth(year: number, month: number): EventBundle {
   const monthStart = Date.UTC(year, month, 1)
   const monthEnd = Date.UTC(year, month + 1, 1)
   let bundle: EventBundle
-  if (monthEnd <= MIN_SUPPORTED_TIME || monthStart >= MAX_SUPPORTED_TIME) {
+  if (monthEnd <= MIN_COMPUTED_TIME || monthStart >= MAX_COMPUTED_TIME) {
     bundle = emptyBundle(monthStart - PAD_DAYS * DAY_MS, monthEnd + PAD_DAYS * DAY_MS)
   } else {
     const start = monthStart - PAD_DAYS * DAY_MS

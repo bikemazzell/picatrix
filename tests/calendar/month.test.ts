@@ -24,9 +24,13 @@ describe('monthGrid(2026, 11, America/New_York)', () => {
     expect(cells.filter(c => c.inMonth)).toHaveLength(30)
   })
 
-  test('the mansion at 23:59: Nov 19 is 28, Nov 20 is 2', () => {
-    expect(cell(cells, 19).mansion).toBe(28)
-    expect(cell(cells, 20).mansion).toBe(2)
+  test('each cell lists every mansion entered that day: Nov 19 is 28, Nov 20 is 1 then 2', () => {
+    expect(cell(cells, 19).mansions).toEqual([28])
+    expect(cell(cells, 20).mansions).toEqual([1, 2])
+  })
+
+  test('a day with no mansion ingress shows the mansion it continues', () => {
+    expect(cell(cells, 17).mansions).toEqual([26])
   })
 
   test('phase events: New Moon on Nov 9, Full Moon on Nov 24', () => {
@@ -136,6 +140,20 @@ describe('eventsFor cache', () => {
     expect(bundle.mansions).toEqual([])
     expect(bundle.voids).toEqual([])
     expect(bundle.mercury).toEqual([])
+  })
+})
+
+describe('monthGrid at the edges of the range', () => {
+  test('December 2100 has full data through Dec 31 in a far-west zone, and no data in 2101', () => {
+    const cells = monthGrid(2100, 12, 'Pacific/Honolulu')
+    const dec31 = cells.find(c => c.date.m === 12 && c.date.d === 31)!
+    const jan1 = cells.find(c => c.date.y === 2101 && c.date.d === 1)!
+    expect(dec31.inRange).toBe(true)
+    expect(dec31.strip.length).toBeGreaterThan(0)
+    expect(dec31.mansions.length).toBeGreaterThan(0)
+    expect(jan1.inRange).toBe(false)
+    expect(jan1.mansions).toEqual([])
+    expect(jan1.strip).toEqual([])
   })
 })
 
