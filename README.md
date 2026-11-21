@@ -1,63 +1,90 @@
 # Picatrix Lunar Almanac
 
-**Try it here: [bikemazzell.github.io/picatrix](https://bikemazzell.github.io/picatrix/)**
+Open the app: [bikemazzell.github.io/picatrix](https://bikemazzell.github.io/picatrix/)
 
-A lunar almanac in your browser. It recreates the spirit of the old iLuna app: open it and see what the Moon is doing right now, then browse any date between 1900 and 2100 in any time zone. Alongside the astronomy, every item carries lore from the *Picatrix*, the 11th-century Arabic treatise on astral magic.
+Picatrix shows what the Moon is doing now, on any day, and across any month from 1900 to 2100. Tap any item to read what the *Picatrix*, an 11th-century Arabic book on astral magic, says about it.
+
+<p>
+  <img src="screenshots/phone-now.png" alt="The Now view on a phone, with cards for phase, sign, void of course, mansion, and Mercury" width="200">
+  <img src="screenshots/phone-month.png" alt="The Month view on a phone, with today marked" width="200">
+  <img src="screenshots/phone-lore.png" alt="A lore sheet open over the Now view" width="200">
+  <img src="screenshots/phone-day.png" alt="The Day view on a phone in the dark theme" width="200">
+</p>
+
+<img src="screenshots/desktop-month.png" alt="The Month view on a desktop browser" width="820">
 
 ## What it shows
 
-- **Moon phase** - waxing or waning, the exact quarter events, and how full it is right now
-- **Zodiacal sign** - which sign the Moon occupies and when it changes
-- **Void of course** - periods when the Moon makes no aspect before leaving her sign, a classic electional no-go window
-- **The 28 lunar mansions** - the Moon's position in the traditional mansion cycle, the feature iLuna was known for
-- **Mercury retrograde** - the full shadow cycle: pre-shadow, station, retrograde, and exit
+The app follows five things:
 
-Each card, row, and calendar cell opens a description grounded in the *Picatrix*: what the mansion is good for and not good for, its talisman lore, what the treatise says about the Moon in each sign, and how it grades the aspects.
+- Moon phase: waxing or waning, and the time of the next New Moon, First Quarter, Full Moon, or Last Quarter.
+- Sign: the zodiac sign of the Moon, and the time it moves to the next sign.
+- Void of course: the hours after the Moon makes its last aspect in a sign and before it enters the next sign. Traditional astrology avoids starting things in these hours.
+- Mansion: which of the 28 lunar mansions the Moon is in. The mansions are the traditional Arabic division of the Moon's path.
+- Mercury: whether Mercury is direct, in pre-shadow, retrograde, or in post-shadow.
 
-## Using it
+## How to use it
 
-Three views: **Now** (cards for the current moment, with previous and next stepping), **Day** (every event of a local day), and **Month** (a calendar grid with a per-day strip showing sign elements and void windows).
+Now shows one card for each of the five items, for the current moment. Use the arrows on a card to step that card to its previous or next change. Select "Back to now" to return all cards to the present.
 
-Settings offer a time zone picker, 12/24-hour clock, text size, dark theme, and toggles for each feature. Only the time zone setting matters for the sky itself: the app never asks for or uses your location.
+Day lists every change during one day, with times in your time zone. Use the arrows to move one day, or the calendar button to jump to a date.
 
-It is an installable progressive web app. On a phone, choose "Add to Home Screen" from the browser menu. After the first load it runs fully offline, on a plane or anywhere else.
+Month shows a calendar. Each day shows its date, its mansion numbers, small symbols for Moon phases, sign changes, and Mercury retrograde, and a colored bar. The bar shows the element of the Moon's sign through the day: red for fire, green for earth, yellow for air, blue for water, and gray for void of course. Today has its date in a filled circle. Select a day to open it in Day.
 
-## The texts
+Select any card or row to open its lore. Close the lore with the Close button, the Escape key, or a tap outside it.
 
-The lore in `content/` is original paraphrase, adapted from the Attrell and Porreca (2020) English translation of the *Picatrix* and cited by book and chapter. It condenses and rephrases; it is not quotation. Where an idea is younger than the treatise (the void-of-course label itself, or the outer planets), the text says so instead of putting words in Picatrix's mouth.
+In Settings, you choose the time zone, the clock (12-hour or 24-hour), the text size, and the theme. You also choose which of the five items to show.
 
-The app's inspiration is iLuna by Alexander Kolesnikov, which is no longer available. None of its code or text is used here.
+## Install it on your phone
 
-## For the technically curious
+1. Open the app link in your phone browser.
+2. Open the browser menu and select "Add to Home Screen".
+3. Open Picatrix from your home screen.
 
-There is no server and no star database. After the first load the app makes zero network requests: every position, ingress, aspect, and station is computed in your browser by [astronomy-engine](https://github.com/cosinekitty/astronomy), a compact MIT-licensed implementation of standard analytical theories (VSOP87 for the planets, a truncated lunar theory for the Moon), reduced to apparent geocentric positions in the ecliptic of date.
+After the first load, the app works with no internet connection.
 
-Mansions are computed the traditional way: 28 equal slices of 360 degrees, mansion 1 starting at 0 Aries. Void of course uses the five classical aspects (conjunction, sextile, square, trine, opposition) against all nine planets beyond the Moon.
+## Privacy
 
-Accuracy is not taken on faith. During development, the app's output was compared event-by-event against reference fixtures generated from JPL's DE440s numerical ephemeris (via Skyfield), the gold standard for planetary positions:
+The app has no server and no account. It does not ask for your location: it uses only the time zone you choose. Your settings stay in your browser. After the first load, the app sends no network requests.
 
-- Moon phases, sign and mansion ingresses, and aspects agree with DE440s to within **47 seconds** over 1950-2050 (the design promise is one minute)
-- Mercury stations agree within **10 minutes**, which matters near a station where Mercury's motion is nearly flat
-- Void-of-course periods match the published Lunarium tables for 2025-2027 exactly, 481 of 481 periods
+## Where the texts come from
 
-## Hacking on it
+The texts in `content/` are original paraphrases of the English translation of the *Picatrix* by Dan Attrell and David Porreca (Penn State Press, 2019). Each text gives its book and chapter. When an idea is newer than the *Picatrix*, for example the term "void of course" or the outer planets, the text says so.
+
+The idea for the app comes from iLuna by Alexander Kolesnikov, which is no longer available. Picatrix uses none of its code or text.
+
+## Accuracy
+
+Your browser calculates every position with [astronomy-engine](https://github.com/cosinekitty/astronomy), an MIT-licensed astronomy library. The app does not download star tables.
+
+The reference tests compare the results with NASA JPL's DE440s ephemeris, a standard reference for planet positions:
+
+- Moon phases, sign changes, mansion changes, and aspects agree within 47 seconds from 1950 to 2050.
+- Mercury stations agree within 10 minutes.
+- Void-of-course periods for 2025 to 2027 match the published Lunarium tables: 481 of 481 periods.
+
+The mansions are 28 equal parts of the zodiac, and mansion 1 starts at 0 degrees Aries. Void of course uses the five classical aspects (conjunction, sextile, square, trine, and opposition) to the Sun, Mercury, Venus, Mars, Jupiter, Saturn, Uranus, Neptune, and Pluto.
+
+## For developers
+
+You need Node.js 22.
 
 ```
 npm install
 npm run dev
 ```
 
-`make quality` runs typecheck, lint, the full test suite (171 tests), the production build, and a service-worker precache check.
+Before you commit, run `make quality`. It runs the type check, the linter, all tests, the production build, and a check of the offline cache.
 
-The DE440s comparison can be re-run locally. Create the venv and fetch the ephemeris:
+To repeat the DE440s comparison, set up the Python tools:
 
 ```
 python3 -m venv tools/reference/.venv
 tools/reference/.venv/bin/pip install -r tools/reference/requirements.txt
 ```
 
-Place `de440s.bsp` in `tools/reference/` (see `tools/reference/generate.py`), regenerate the fixtures, then run `npm run test:reference` for all 105 fixture years.
+Put `de440s.bsp` in `tools/reference/` (`tools/reference/generate.py` tells you where to get it), make the fixtures again, and run `npm run test:reference`.
 
-## reference/
+## License
 
-The `reference/` directory holds copyrighted PDF editions used during development. It is git-ignored and never distributed with this repository.
+MIT
