@@ -11,7 +11,7 @@ Picatrix shows what the Moon is doing now, on any day, and across any month from
   <img src="screenshots/phone-day.png" alt="The Day view on a phone in the dark theme" width="200">
 </p>
 
-<img src="screenshots/desktop-month.png" alt="The Month view on a desktop browser" width="820">
+<img src="screenshots/desktop-now.png" alt="The Now view on a desktop browser" width="820">
 
 ## What it shows
 
