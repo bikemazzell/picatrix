@@ -7,3 +7,4 @@ local/
 tools/reference/.venv/
 tools/reference/*.bsp
 __pycache__/
+docs/
