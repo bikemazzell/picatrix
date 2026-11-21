@@ -87,6 +87,27 @@ describe('monthGrid(2026, 11, America/New_York)', () => {
     expect(Math.abs(strip[1].from - voidStart)).toBeLessThan(0.002)
     expect(Math.abs(strip[2].from - taurus)).toBeLessThan(0.002)
   })
+
+  test('adjacent breaks closer than 0.5% merge so no segment is sub-pixel', () => {
+    const months = [
+      monthGrid(2026, 3, TZ),
+      monthGrid(2026, 10, TZ),
+      monthGrid(2026, 11, TZ),
+      monthGrid(2026, 12, TZ),
+    ]
+    let segments = 0
+    for (const month of months) {
+      for (const c of month.filter(x => x.inMonth)) {
+        expect(c.strip[0].from).toBe(0)
+        expect(c.strip[c.strip.length - 1].to).toBe(1)
+        for (const seg of c.strip) {
+          expect(seg.to - seg.from).toBeGreaterThanOrEqual(0.005)
+          segments++
+        }
+      }
+    }
+    expect(segments).toBeGreaterThan(90)
+  })
 })
 
 describe('eventsFor cache', () => {

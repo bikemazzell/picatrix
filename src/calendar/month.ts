@@ -4,6 +4,7 @@ import { addDays, dayBounds, type LocalDate } from './tz'
 import { elementOf, type MonthCell } from './types'
 
 const MINUTE_MS = 60_000
+const MERGE_FRACTION = 0.005
 
 export function monthGrid(y: number, m: number, tz: string): MonthCell[] {
   const first = firstCell(y, m)
@@ -53,7 +54,12 @@ function stripFor(start: Date, end: Date, bundle: EventBundle): MonthCell['strip
     if (period.start > start && period.start < end) breaks.add(fraction(period.start))
     if (period.end > start && period.end < end) breaks.add(fraction(period.end))
   }
-  const points = [0, ...[...breaks].sort((a, b) => a - b), 1]
+  const points = [0]
+  for (const point of [...breaks].sort((a, b) => a - b)) {
+    if (point - points[points.length - 1] >= MERGE_FRACTION) points.push(point)
+  }
+  if (1 - points[points.length - 1] >= MERGE_FRACTION) points.push(1)
+  else points[points.length - 1] = 1
   const strip: MonthCell['strip'] = []
   for (let i = 0; i + 1 < points.length; i++) {
     const mid = new Date(start.getTime() + ((points[i] + points[i + 1]) / 2) * spanMs)

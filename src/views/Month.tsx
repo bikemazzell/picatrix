@@ -10,6 +10,8 @@ const RANGE_MESSAGE =
 
 const WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
 const QUARTER_MOON: Record<number, { fraction: number; waxing: boolean }> = {
   0: { fraction: 0, waxing: true },
   1: { fraction: 0.5, waxing: true },
@@ -40,6 +42,11 @@ function shiftMonth(y: number, m: number, n: number): { y: number; m: number } {
 
 const liveNow = () => new Date()
 
+function cellLabel(cell: MonthCell): string {
+  const label = `${MONTHS[cell.date.m - 1]} ${cell.date.d}, mansion ${cell.mansion}`
+  return cell.strip.some(segment => segment.void) ? `${label}, void of course` : label
+}
+
 function Cell({
   cell,
   today,
@@ -57,7 +64,7 @@ function Cell({
     <button
       type="button"
       class={classes.join(' ')}
-      aria-label={dayKey(cell.date)}
+      aria-label={cellLabel(cell)}
       onClick={() => {
         location.hash = `#/day/${dayKey(cell.date)}`
       }}

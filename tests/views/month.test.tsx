@@ -8,6 +8,8 @@ import { Month } from '../../src/views/Month'
 const TZ = 'America/New_York'
 const AT = () => new Date('2026-11-20T15:28:00Z')
 
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+
 function seed(overrides?: { features?: Partial<Record<Feature, boolean>> }) {
   window.localStorage.setItem(
     'picatrix.settings',
@@ -39,7 +41,9 @@ function openMonth(month: string) {
 }
 
 function cell(container: Element, iso: string): HTMLElement {
-  const button = container.querySelector(`button.month-cell[aria-label="${iso}"]`)
+  const [, m, d] = iso.split('-')
+  const prefix = `${MONTHS[Number(m) - 1]} ${Number(d)},`
+  const button = container.querySelector(`button.month-cell[aria-label^="${prefix}"]`)
   expect(button).not.toBeNull()
   return button as HTMLElement
 }
@@ -103,6 +107,24 @@ test('strip segments use the element and void CSS variables and fraction widths'
   expect(voidSeg).toBeDefined()
   expect(Math.abs(parseFloat(fire!.style.width) - 96.37)).toBeLessThan(0.3)
   expect(Math.abs(parseFloat(voidSeg!.style.width) - 3.63)).toBeLessThan(0.3)
+})
+
+test('cell labels name the date, mansion, and void of course', () => {
+  seed()
+  const { container } = render(<Month month="2026-11" now={AT} />)
+  const labels = [...container.querySelectorAll('button.month-cell')].map(button =>
+    button.getAttribute('aria-label') ?? '',
+  )
+  expect(labels).toHaveLength(42)
+  expect(cell(container, '2026-11-20').getAttribute('aria-label')).toBe(
+    'November 20, mansion 2, void of course',
+  )
+  expect(labels.some(label => !label.endsWith('void of course'))).toBe(true)
+  for (const label of labels) {
+    expect(label).toMatch(
+      /^(January|February|March|April|May|June|July|August|September|October|November|December) \d{1,2}, mansion \d{1,2}(, void of course)?$/,
+    )
+  }
 })
 
 test('clicking a cell routes to the day view', async () => {
