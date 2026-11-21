@@ -241,10 +241,10 @@ Each item has a test in the task that owns the code (Tasks 5, 6, 10).
 - Create: `src/views/Day.tsx`
 - Test: `tests/views/day.test.tsx`
 
-- [ ] **Step 1:** Write the test for `#/day/2026-11-20` in America/New_York: sections Phase "Waxing all day", Sign "Pisces until 12:51 AM" and "Aries after 12:51 AM", Void "Until 12:51 AM", Mansion with three rows (Batn al-Hut, Al-Sharatain, Al-Butain), Mercury "leaving" until 2026-11-30. For `#/day/2026-11-22`: Void "2:38 AM – 5:09 AM". Previous and next day buttons change the route. A date input changes the route. Rows open the sheet. Dates before 1900-01-01 or after 2100-12-31 show a message instead of data.
-- [ ] **Step 2:** Run it. Expected: FAIL. Implement.
-- [ ] **Step 3:** Run it. Expected: PASS.
-- [ ] **Step 4:** Commit: `feat(ui): Day view`.
+- [x] **Step 1:** Write the test for `#/day/2026-11-20` in America/New_York: sections Phase "Waxing all day", Sign "Pisces until 12:52 AM" and "Aries after 12:52 AM", Void "Until 12:52 AM", Mansion with three rows (Batn al-Hut, Al-Sharatain, Al-Butain), Mercury "leaving" until 2026-11-30. For `#/day/2026-11-22`: Void "2:38 AM – 5:09 AM". Previous and next day buttons change the route. A date input changes the route. Rows open the sheet. Dates before 1900-01-01 or after 2100-12-31 show a message instead of data.
+- [x] **Step 2:** Run it. Expected: FAIL. Implement.
+- [x] **Step 3:** Run it. Expected: PASS.
+- [x] **Step 4:** Commit: `feat(ui): Day view`.
 
 ### Task 11: Month view
 
