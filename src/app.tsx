@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks'
+import { Day } from './views/Day'
 import { Nav } from './views/Nav'
 import { Now } from './views/Now'
 
@@ -26,7 +27,7 @@ export function parseHash(hash: string): Route {
 function Placeholder({ route }: { route: Route }) {
   switch (route.view) {
     case 'day':
-      return <h1>Day {route.date}</h1>
+      return <Day date={route.date} />
     case 'month':
       return <h1>Month {route.month}</h1>
     case 'settings':
