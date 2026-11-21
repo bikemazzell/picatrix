@@ -17,6 +17,7 @@
   "devDependencies": {
     "@preact/preset-vite": "^2.10.6",
     "@testing-library/preact": "^3.2.6",
+    "@types/node": "^26.6.6",
     "eslint": "^10.15.0",
     "jsdom": "^31.0.1",
     "tsx": "^4.23.15",

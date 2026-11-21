@@ -5,8 +5,8 @@ import { getContent } from '../../src/content/load'
 import { ASPECT_NAMES, MANSION_NAMES, PLANET_NAMES, SIGN_NAMES } from '../../src/content/names'
 
 function contentFiles(): string[] {
-  return readdirSync('content', { recursive: true }).filter(
-    file => typeof file === 'string' && file.endsWith('.md'),
+  return readdirSync('content', { recursive: true, encoding: 'utf8' }).filter(file =>
+    file.endsWith('.md'),
   )
 }
 
@@ -117,7 +117,9 @@ describe('front matter grammar', () => {
 
   async function importFreshLoader(): Promise<void> {
     vi.resetModules()
-    await expect(import(FRESH_LOADER)).rejects.toThrow(/front matter/)
+    await expect(import(FRESH_LOADER)).rejects.toThrow(
+      'zz-broken: front matter must be exactly two key lines',
+    )
   }
 
   afterEach(() => {
@@ -132,5 +134,21 @@ describe('front matter grammar', () => {
   it('rejects a file whose front matter adds a third line', async () => {
     writeFileSync(BROKEN, 'title: T\nsource: S\nextra: nope\n\nA body with a third key.\n')
     await importFreshLoader()
+  })
+
+  it('keeps a colon inside a value, splitting on the first colon only', async () => {
+    const probe = 'content/zz-colon.md'
+    const colonLoader: string = '../../src/content/load.ts?colon'
+    writeFileSync(
+      probe,
+      'title: T\nsource: Picatrix (adapted), Book I: note\n\nA body.\n',
+    )
+    try {
+      vi.resetModules()
+      const mod = await import(colonLoader)
+      expect(mod.getContent('zz-colon').source).toBe('Picatrix (adapted), Book I: note')
+    } finally {
+      rmSync(probe, { force: true })
+    }
   })
 })
