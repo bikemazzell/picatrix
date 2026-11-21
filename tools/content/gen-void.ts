@@ -1,4 +1,5 @@
 import { mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { VOID_PLANETS, type AspectAngle, type Planet } from '../../src/astro'
 import { ASPECT_ANGLES } from '../../src/content/ids'
@@ -76,9 +77,10 @@ function compose(angle: AspectAngle, planet: Planet): string {
   const aspect = ASPECT_NAMES[angle]
   const article = articleFor(aspect)
   const preposition = prepositionFor(angle)
-  const linking = `When the Moon closes her course in a sign with ${article.toLowerCase()} ${aspect.toLowerCase()} ${preposition} ${planet}, the quiet stretch that follows carries something of ${PLANET_ESSENCE[planet]}.`
+  const target = planet === 'Sun' ? 'the Sun' : planet
+  const linking = `When the Moon closes her course in a sign with ${article.toLowerCase()} ${aspect.toLowerCase()} ${preposition} ${target}, the quiet stretch that follows carries something of ${PLANET_ESSENCE[planet]}.`
   return [
-    `title: Void Ending in ${article} ${aspect} ${preposition} ${planet}`,
+    `title: Void Ending in ${article} ${aspect} ${preposition} ${target}`,
     `source: ${sourceFor(planet)}`,
     '',
     GENERATED_HEADER,
@@ -91,7 +93,7 @@ function compose(angle: AspectAngle, planet: Planet): string {
 }
 
 function main(): void {
-  const dir = 'content/void'
+  const dir = fileURLToPath(new URL('../../content/void', import.meta.url))
   mkdirSync(dir, { recursive: true })
   const pairs = ASPECT_ANGLES.flatMap(angle =>
     VOID_PLANETS.map(planet => ({ angle, planet })),
