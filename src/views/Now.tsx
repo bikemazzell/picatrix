@@ -8,16 +8,7 @@ import { formatDateTime, formatTime, type Clock } from '../format'
 import { effectiveTimeZone, useSettings } from '../settings'
 import { AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 import { Sheet } from './Sheet'
-
-const FEATURES: readonly Feature[] = ['phase', 'sign', 'void', 'mansion', 'mercury']
-
-const HEADINGS: Record<Feature, string> = {
-  phase: 'Phase',
-  sign: 'Sign',
-  void: 'Void',
-  mansion: 'Mansion',
-  mercury: 'Mercury',
-}
+import { FEATURES, HEADINGS } from './features'
 
 const QUARTER_NAMES: Record<number, string> = {
   0: 'New',

@@ -44,8 +44,9 @@ export function MoonGlyph({ fraction, waxing }: { fraction: number; waxing: bool
   )
 }
 
-export function SignGlyph({ sign }: { sign: number }) {
+export function SignGlyph({ sign, silent = false }: { sign: number; silent?: boolean }) {
   const index = ((sign % 12) + 12) % 12
+  if (silent) return <span class="glyph" aria-hidden="true">{SIGN_GLYPHS[index]}</span>
   return (
     <span class="glyph" role="img" aria-label={SIGN_NAMES[index]}>
       {SIGN_GLYPHS[index]}
@@ -69,7 +70,8 @@ export function AspectGlyph({ angle }: { angle: AspectAngle }) {
   )
 }
 
-export function MansionBadge({ n }: { n: number }) {
+export function MansionBadge({ n, silent = false }: { n: number; silent?: boolean }) {
+  if (silent) return <span class="mansion-badge">{n}</span>
   return (
     <span class="mansion-badge" role="img" aria-label={`Mansion ${n} of 28`}>
       {n}

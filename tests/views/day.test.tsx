@@ -95,6 +95,14 @@ test('rows open the sheet with the derived content', () => {
   expect(screen.getByRole('dialog', { name: 'Void Ending in a Trine to Sun' })).toBeTruthy()
 })
 
+test('sign and mansion row glyphs stay silent while the void aspect glyph keeps its label', () => {
+  seed()
+  openDay('2026-11-20')
+  expect(screen.queryByLabelText('Pisces')).toBeNull()
+  expect(screen.queryByLabelText('Mansion 28 of 28')).toBeNull()
+  expect(screen.getByLabelText('Trine')).toBeTruthy()
+})
+
 test('the sign section is absent when the feature is off, and the others remain', () => {
   seed({ features: { sign: false } })
   openDay('2026-11-20')

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'preact/hooks'
 import type { VNode } from 'preact'
-import { illumination, type VoidPeriod } from '../astro'
+import { illumination, type MercuryState, type VoidPeriod } from '../astro'
 import { daySummary } from '../calendar/day'
 import type { DaySummary, Feature, Span } from '../calendar/types'
 import { addDays, dayBounds, toLocal, type LocalDate } from '../calendar/tz'
@@ -9,16 +9,7 @@ import { formatDateTime, formatTime, type Clock } from '../format'
 import { effectiveTimeZone, useSettings } from '../settings'
 import { AspectGlyph, MansionBadge, MoonGlyph, PlanetGlyph, SignGlyph } from './glyphs'
 import { Sheet } from './Sheet'
-
-const FEATURES: readonly Feature[] = ['phase', 'sign', 'void', 'mansion', 'mercury']
-
-const HEADINGS: Record<Feature, string> = {
-  phase: 'Phase',
-  sign: 'Sign',
-  void: 'Void',
-  mansion: 'Mansion',
-  mercury: 'Mercury',
-}
+import { FEATURES, HEADINGS } from './features'
 
 const QUARTER_NAMES: Record<number, string> = {
   0: 'New Moon',
@@ -34,7 +25,7 @@ const QUARTER_IDS: Record<number, string> = {
   3: 'last-quarter',
 }
 
-const TRANSITION_TEXT: Record<string, string> = {
+const TRANSITION_TEXT: Record<MercuryState, string> = {
   approaching: 'enters shadow at',
   retrograde: 'turns retrograde at',
   leaving: 'turns direct at',
@@ -150,7 +141,7 @@ function rowsFor(
       return summary.signs.map(span => ({
         id: `sign/${SIGN_NAMES[span.value].toLowerCase()}`,
         text: spanText(SIGN_NAMES[span.value], span, date, tz, clock),
-        lead: <SignGlyph sign={span.value} />,
+        lead: <SignGlyph sign={span.value} silent />,
       }))
     case 'void':
       return summary.voids.map(period => voidRow(period, date, tz, clock))
@@ -158,7 +149,7 @@ function rowsFor(
       return summary.mansions.map(span => ({
         id: `mansion/${String(span.value).padStart(2, '0')}`,
         text: spanText(MANSION_NAMES[span.value - 1], span, date, tz, clock),
-        lead: <MansionBadge n={span.value} />,
+        lead: <MansionBadge n={span.value} silent />,
       }))
     case 'mercury': {
       const mercury = summary.mercury
@@ -205,11 +196,11 @@ function Section({
     <section class="day-section" data-feature={feature}>
       <h2>{HEADINGS[feature]}</h2>
       <ul class="day-rows">
-        {rowsFor(summary, feature, date, tz, clock).map((row, i) => (
-          <li key={i}>
+        {rowsFor(summary, feature, date, tz, clock).map(row => (
+          <li key={row.id}>
             <button type="button" class="day-row" onClick={() => onOpen(row.id)}>
               {row.lead}
-              <span class="row-text">{row.text}</span>
+              <span>{row.text}</span>
               {row.sub !== undefined && <span class="row-sub">{row.sub}</span>}
             </button>
           </li>
