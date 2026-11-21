@@ -1,4 +1,4 @@
 title: Virgo
-source: Picatrix (adapted), Book III chapter 2
+source: Picatrix (adapted), Book IV chapter 2
 
 The Virgo rite is the longest in the chapter to prepare. Thirty thrushes, decapitated and cooked until their feathers fall off, are salted a little and set aside; each day for the thirty days before the Moon's entry the operator eats one, suffumigated with four drams of saffron, eats nothing else for six hours afterward, and drinks no wine at all. At the end of the fast he washes in a spring flowing toward the east and seals a pound of that water in a vessel made under set degrees of Sun and Moon in Aquarius, stoppered with wax that has never felt fire. In the open, with a censer of incense and saffron, the prayer is said, the vessel goes into a hole one cubit deep dug with the right hand and opening to the south, and the recorded word is repeated without pause throughout the digging. A thin sheet of lead inscribed with a golden needle is buried atop the filled hole, and the text promises the request is fulfilled immediately.

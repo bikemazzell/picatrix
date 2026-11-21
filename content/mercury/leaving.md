@@ -1,4 +1,4 @@
 title: Mercury Leaving the Shadow
-source: Picatrix (adapted), Book II chapter 3 and Book III chapter 2
+source: Picatrix (adapted), Book II chapter 3 and Book IV chapter 2
 
 This almanac marks the weeks after the direct station as a shadow still to clear; that map is modern, and Picatrix does not draw it, though he knows the station itself as the heart of the impediment. What the source marks is condition rather than recovery: works that lean on Mercury wait for him direct and uncombusted, and one ritual in the chapter times its resins to a moment with Mercury bright and moving forward. The rule against a retrograde lord lapses as the station passes, but the wider doctrine of impediments still asks the operator to weigh the whole condition of the planet, his place, his speed, his distance from the Sun's beams, and the aspects he receives, before trusting any election to him.
